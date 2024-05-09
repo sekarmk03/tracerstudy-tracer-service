@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package tracer_study_grpc;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message UserStudy {
+    uint64 id = 1;
+    string nama_responden = 2;
+    string email_responden = 3;
+    string hp_responden = 4;
+    string nama_instansi = 5;
+    string jabatan = 6;
+    string alamat_instansi = 7;
+    string nim_lulusan = 8;
+    string nama_lulusan = 9;
+    string prodi_lulusan = 10;
+    string tahun_lulusan = 11;
+    string lama_mengenal_lulusan = 12;
+    string etika = 13;
+    string keahlian_bid_ilmu = 14;
+    string bahasa_inggris = 15;
+    string penggunaan_ti = 16;
+    string komunikasi = 17;
+    string kerjasama_tim = 18;
+    string pengembangan_diri = 19;
+    string kesiapan_terjun_masy = 20;
+    string keunggulan_lulusan = 21;
+    string kelemahan_lulusan = 22;
+    string saran_peningkatan_kompetensi_lulusan = 23;
+    string saran_perbaikan_kurikulum = 24;
+    google.protobuf.Timestamp created_at = 27;
+    google.protobuf.Timestamp updated_at = 28;
+    google.protobuf.Timestamp deleted_at = 29;
+}
+
+message SingleUserStudyResponse {
+    uint32 code = 1;
+    string message = 2;
+    UserStudy data = 3;
+}
+
+message MultipleUserStudyResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated UserStudy data = 3;
+}
+
+message GetUserStudyByNimRequest {
+    string nim = 1;
+    string email_responden = 2;
+    string hp_responden = 3;
+}
+
+message ExportUSReportResponse {
+    uint32 code = 1;
+    string message = 2;
+    bytes data = 3;
+}
+
+service UserStudyService {
+    rpc GetAllUserStudy(google.protobuf.Empty) returns (MultipleUserStudyResponse) {}
+    rpc GetUserStudyByNim(GetUserStudyByNimRequest) returns (SingleUserStudyResponse) {}
+    rpc CreateUserStudy(UserStudy) returns (SingleUserStudyResponse) {}
+    rpc UpdateUserStudy(UserStudy) returns (SingleUserStudyResponse) {}
+    rpc ExportUSReport(google.protobuf.Empty) returns (ExportUSReportResponse) {}
+}

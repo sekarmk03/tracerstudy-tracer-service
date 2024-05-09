@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package tracer_study_grpc;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message Fakultas {
+    uint32 id = 1;
+    string kode = 2;
+    string nama = 3;
+    string akronim = 4;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
+    google.protobuf.Timestamp deleted_at = 7;
+}
+
+message GetAllFakultasResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated Fakultas data = 3;
+}
+
+message GetFakultasByKodeRequest {
+    string kode = 1;
+}
+
+message GetFakultasResponse {
+    uint32 code = 1;
+    string message = 2;
+    Fakultas data = 3;
+}
+
+message DeleteFakultasResponse {
+    uint32 code = 1;
+    string message = 2;
+}
+
+service FakultasService {
+    rpc GetAllFakultas(google.protobuf.Empty) returns (GetAllFakultasResponse) {};
+    rpc GetFakultasByKode(GetFakultasByKodeRequest) returns (GetFakultasResponse) {};
+    rpc CreateFakultas(Fakultas) returns (GetFakultasResponse) {};
+    rpc UpdateFakultas(Fakultas) returns (GetFakultasResponse) {};
+    rpc DeleteFakultas(GetFakultasByKodeRequest) returns (DeleteFakultasResponse) {};
+}

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package tracer_study_grpc;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+import "provinsi.proto";
+
+message KabKota {
+    uint32 id = 1;
+    string id_wil = 2;
+    string nama = 3;
+    string id_induk_wil = 4;
+    Provinsi provinsi = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp updated_at = 7;
+    google.protobuf.Timestamp deleted_at = 8;
+}
+
+message GetAllKabKotaResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated KabKota data = 3;
+}
+
+message GetKabKotaByIdWilRequest {
+    string id_wil = 1;
+}
+
+message GetKabKotaResponse {
+    uint32 code = 1;
+    string message = 2;
+    KabKota data = 3;
+}
+
+message DeleteKabKotaResponse {
+    uint32 code = 1;
+    string message = 2;
+}
+
+service KabKotaService {
+    rpc GetAllKabKota(google.protobuf.Empty) returns (GetAllKabKotaResponse) {};
+    rpc GetKabKotaByIdWil(GetKabKotaByIdWilRequest) returns (GetKabKotaResponse) {};
+    rpc CreateKabKota(KabKota) returns (GetKabKotaResponse) {};
+    rpc UpdateKabKota(KabKota) returns (GetKabKotaResponse) {};
+    rpc DeleteKabKota(GetKabKotaByIdWilRequest) returns (DeleteKabKotaResponse) {};
+}

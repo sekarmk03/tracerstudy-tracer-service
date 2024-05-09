@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package tracer_study_grpc;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message Prodi {
+    uint32 id = 1;
+    string kode = 2;
+    string kode_dikti = 3;
+    string kode_integrasi = 4;
+    string nama = 5;
+    string jenjang = 6;
+    string kode_fakultas = 7;
+    string nama_fakultas = 8;
+    string akronim_fakultas = 9;
+    google.protobuf.Timestamp created_at = 10;
+    google.protobuf.Timestamp updated_at = 11;
+    google.protobuf.Timestamp deleted_at = 12;
+}
+
+message GetAllProdiResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated Prodi data = 3;
+}
+
+message GetProdiByKodeRequest {
+    string kode = 1;
+}
+
+message GetProdiResponse {
+    uint32 code = 1;
+    string message = 2;
+    Prodi data = 3;
+}
+
+message DeleteProdiResponse {
+    uint32 code = 1;
+    string message = 2;
+}
+
+service ProdiService {
+    rpc GetAllProdi(google.protobuf.Empty) returns (GetAllProdiResponse) {};
+    rpc GetProdiByKode(GetProdiByKodeRequest) returns (GetProdiResponse) {};
+    rpc CreateProdi(Prodi) returns (GetProdiResponse) {};
+    rpc UpdateProdi(Prodi) returns (GetProdiResponse) {};
+    rpc DeleteProdi(GetProdiByKodeRequest) returns (DeleteProdiResponse) {};
+}

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package tracer_study_grpc;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message Provinsi {
+    uint32 id = 1;
+    string id_wil = 2;
+    string nama = 3;
+    uint64 ump = 4;
+    uint64 ump_pkts = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp updated_at = 7;
+    google.protobuf.Timestamp deleted_at = 8;
+}
+
+message GetAllProvinsiResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated Provinsi data = 3;
+}
+
+message GetProvinsiByIdWilRequest {
+    string id_wil = 1;
+}
+
+message GetProvinsiResponse {
+    uint32 code = 1;
+    string message = 2;
+    Provinsi data = 3;
+}
+
+message DeleteProvinsiResponse {
+    uint32 code = 1;
+    string message = 2;
+}
+
+service ProvinsiService {
+    rpc GetAllProvinsi(google.protobuf.Empty) returns (GetAllProvinsiResponse) {};
+    rpc GetProvinsiByIdWil(GetProvinsiByIdWilRequest) returns (GetProvinsiResponse) {};
+    rpc CreateProvinsi(Provinsi) returns (GetProvinsiResponse) {};
+    rpc UpdateProvinsi(Provinsi) returns (GetProvinsiResponse) {};
+    rpc DeleteProvinsi(GetProvinsiByIdWilRequest) returns (DeleteProvinsiResponse) {};
+}

@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package tracer_study_grpc;
+option go_package = "./;pb";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+message Responden {
+    uint32 id = 1;
+    string nim = 2;
+    string nama = 3;
+    string jalur_masuk = 4;
+    string tahun_masuk = 5;
+    uint32 lama_studi = 6;
+    string kode_fakultas = 7;
+    string kode_prodi = 8;
+    string jenis_kelamin = 9;
+    string email = 10;
+    string hp = 11;
+    string ipk = 12;
+    string tanggal_sidang = 13;
+    string tahun_sidang = 14;
+    string tanggal_wisuda = 15;
+    string nik = 16;
+    string npwp = 17;
+    google.protobuf.Timestamp created_at = 18;
+    google.protobuf.Timestamp updated_at = 19;
+    google.protobuf.Timestamp deleted_at = 20;
+}
+
+message GetAllRespondenResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated Responden data = 3;
+}
+
+message GetRespondenByNimRequest {
+    string nim = 1;
+}
+
+message GetRespondenByNimResponse {
+    uint32 code = 1;
+    string message = 2;
+    Responden data = 3;
+}
+
+message RespondenUpdate {
+    string ipk = 1;
+    string kodedikti = 2;
+    string jenjang = 3;
+    string namaprodi = 4;
+    string namaprodi2 = 5;
+    string kodeprodi = 6;
+    string kodeprodi2 = 7;
+    string kodefak = 8;
+    string namafak = 9;
+    string jlrmasuk = 10;
+    string thnmasuk = 11;
+    string lamastd = 12;
+}
+
+message UpdateRespondenFromSiakRequest {
+    string nim = 1;
+}
+
+message UpdateRespondenResponse {
+    uint32 code = 1;
+    string message = 2;
+    Responden data = 3;
+}
+
+message CreateRespondenRequest {
+    string nim = 1;
+}
+
+message CreateRespondenResponse {
+    uint32 code = 1;
+    string message = 2;
+    Responden data = 3;
+}
+
+message GetRespondenByNimListRequest {
+    repeated string nims = 1;
+}
+
+service RespondenService {
+    rpc GetAllResponden(google.protobuf.Empty) returns (GetAllRespondenResponse) {};
+    rpc GetRespondenByNim(GetRespondenByNimRequest) returns (GetRespondenByNimResponse) {};
+    rpc UpdateRespondenFromSiak(UpdateRespondenFromSiakRequest) returns (UpdateRespondenResponse) {};
+    rpc CreateResponden(CreateRespondenRequest) returns (CreateRespondenResponse) {};
+    rpc UpdateResponden(Responden) returns (UpdateRespondenResponse) {};
+    rpc GetRespondenByNimList(GetRespondenByNimListRequest) returns (GetAllRespondenResponse) {};
+}
