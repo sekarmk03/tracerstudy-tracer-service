@@ -85,6 +85,6 @@ func splash(cfg *config.Config) {
 	`, version)
 
 	// fmt.Println(colorBlue, fmt.Sprintf(`⇨ REST server started on port :%s`, cfg.Port.REST))
-	fmt.Println(colorCyan, fmt.Sprintf(`⇨ GRPC server started on port :%s`, cfg.Port.GRPC))
+	fmt.Println(colorCyan, fmt.Sprintf(`⇨ GRPC tracer service server started on port :%s`, cfg.Port.GRPC))
 	fmt.Println(colorReset, "")
 }
