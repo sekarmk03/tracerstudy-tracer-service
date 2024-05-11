@@ -35,12 +35,12 @@ var roles = AccessibleRoles{
 		"FetchMhsBiodataByNim": {1, 2, 3, 4, 5, 6},
 	},
 	"/" + BasePath + "." + PktsSvc + "/": {
-		"GetAllPKTS":         {1, 2, 3, 4, 5, 6, 7},
-		"GetPKTSByNim":       {1, 2, 3, 4, 5, 6, 7},
-		"CreatePKTS":         {1, 2, 5, 6},
-		"UpdatePKTS":         {1, 2, 5, 6},
-		"GetNimByDataAtasan": {1, 2, 3, 4, 5, 6, 7},
-		"ExportPKTSReport":   {1, 2, 3, 4, 5},
+		"GetAllPKTS":          {1, 2, 3, 4, 5, 6, 7},
+		"GetPKTSByNim":        {1, 2, 3, 4, 5, 6, 7},
+		"CreatePKTS":          {1, 2, 5, 6},
+		"UpdatePKTS":          {1, 2, 5, 6},
+		"GetNimByDataAtasan":  {1, 2, 3, 4, 5, 6, 7},
+		"ExportPKTSReport":    {1, 2, 3, 4, 5},
 		"GetPKTSRekapByProdi": {1, 2, 3, 4, 5},
 	},
 	"/" + BasePath + "." + ProdiSvc + "/": {
@@ -71,7 +71,7 @@ var roles = AccessibleRoles{
 		"GetUserStudyByNim": {1, 2, 3, 4, 5, 6, 7},
 		"CreateUserStudy":   {1, 2, 7},
 		"UpdateUserStudy":   {1, 2, 7},
-		"ExportUSReport":   {1, 2, 3, 4, 5},
+		"ExportUSReport":    {1, 2, 3, 4, 5},
 	},
 }
 
