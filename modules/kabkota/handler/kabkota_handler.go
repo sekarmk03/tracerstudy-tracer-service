@@ -10,6 +10,8 @@ import (
 	"tracerstudy-tracer-service/modules/kabkota/service"
 	"tracerstudy-tracer-service/pb"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -35,7 +37,7 @@ func (kh *KabKotaHandler) GetAllKabKota(ctx context.Context, req *emptypb.Empty)
 		return &pb.GetAllKabKotaResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var kabkotaArr []*pb.KabKota
@@ -60,7 +62,7 @@ func (kh *KabKotaHandler) GetKabKotaByIdWil(ctx context.Context, req *pb.GetKabK
 			return &pb.GetKabKotaResponse{
 				Code:    uint32(http.StatusNotFound),
 				Message: "kabkota not found",
-			}, nil
+			}, status.Errorf(codes.NotFound, "kabkota not found")
 		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [KabKotaHandler - GetKabKotaByIdWil] Internal server error:", parseError.Message)
@@ -68,7 +70,7 @@ func (kh *KabKotaHandler) GetKabKotaByIdWil(ctx context.Context, req *pb.GetKabK
 		return &pb.GetKabKotaResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	kabkotaProto := entity.ConvertEntityToProto(kabkota)
@@ -90,7 +92,7 @@ func (kh *KabKotaHandler) CreateKabKota(ctx context.Context, req *pb.KabKota) (*
 		return &pb.GetKabKotaResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	kabkotaProto := entity.ConvertEntityToProto(kabkota)
@@ -117,7 +119,7 @@ func (kh *KabKotaHandler) UpdateKabKota(ctx context.Context, req *pb.KabKota) (*
 		return &pb.GetKabKotaResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	kabkotaProto := entity.ConvertEntityToProto(kabkota)
@@ -138,7 +140,7 @@ func (kh *KabKotaHandler) DeleteKabKota(ctx context.Context, req *pb.GetKabKotaB
 		return &pb.DeleteKabKotaResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	return &pb.DeleteKabKotaResponse{
