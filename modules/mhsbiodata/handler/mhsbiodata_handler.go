@@ -9,9 +9,6 @@ import (
 	"tracerstudy-tracer-service/modules/mhsbiodata/entity"
 	"tracerstudy-tracer-service/modules/mhsbiodata/service"
 	"tracerstudy-tracer-service/pb"
-
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type MhsBiodataHandler struct {
@@ -35,12 +32,20 @@ func (mbh *MhsBiodataHandler) FetchMhsBiodataByNim(ctx context.Context, req *pb.
 	if err != nil {
 		if apiResponse == nil {
 			log.Println("WARNING: [MhsBiodataHandler - FetchMhsBiodataByNim] Resource not found: nim ", nim)
-			return nil, status.Errorf(codes.NotFound, "resource not found")
+			// return nil, status.Errorf(codes.NotFound, "resource not found")
+			return &pb.MhsBiodataResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "mhsbiodata not found",
+			}, nil
 		}
 
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [MhsBiodataHandler - FetchMhsBiodataByNim] Error while fetching mhs biodata:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.MhsBiodataResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, nil
 	}
 
 	var mhsBiodata = entity.ConvertEntityToProto(apiResponse)
