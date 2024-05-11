@@ -10,6 +10,8 @@ import (
 	"tracerstudy-tracer-service/modules/fakultas/service"
 	"tracerstudy-tracer-service/pb"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -35,7 +37,7 @@ func (fh *FakultasHandler) GetAllFakultas(ctx context.Context, req *emptypb.Empt
 		return &pb.GetAllFakultasResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var fakultasArr []*pb.Fakultas
@@ -57,11 +59,11 @@ func (fh *FakultasHandler) GetFakultasByKode(ctx context.Context, req *pb.GetFak
 	if err != nil {
 		if fakultas == nil {
 			log.Println("WARNING: [FakultasHandler - GetFakultasByKode] Resource fakultas not found for kode:", req.GetKode())
-			// return nil, status.Errorf(status.Code(err), "fakultas not found")
+			// return nil, status.Errorf(codes.NotFound, "fakultas not found")
 			return &pb.GetFakultasResponse{
 				Code:    uint32(http.StatusNotFound),
 				Message: "fakultas not found",
-			}, nil
+			}, status.Errorf(codes.NotFound, "fakultas not found")
 		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [FakultasHandler - GetFakultasByKode] Internal server error:", parseError.Message)
@@ -69,7 +71,7 @@ func (fh *FakultasHandler) GetFakultasByKode(ctx context.Context, req *pb.GetFak
 		return &pb.GetFakultasResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	fakultasProto := entity.ConvertEntityToProto(fakultas)
@@ -91,7 +93,7 @@ func (fh *FakultasHandler) CreateFakultas(ctx context.Context, req *pb.Fakultas)
 		return &pb.GetFakultasResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	fakultasProto := entity.ConvertEntityToProto(fakultas)
@@ -116,7 +118,7 @@ func (fh *FakultasHandler) UpdateFakultas(ctx context.Context, req *pb.Fakultas)
 		return &pb.GetFakultasResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	fakultasProto := entity.ConvertEntityToProto(fakultas)
@@ -137,7 +139,7 @@ func (fh *FakultasHandler) DeleteFakultas(ctx context.Context, req *pb.GetFakult
 		return &pb.DeleteFakultasResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
-		}, nil
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	return &pb.DeleteFakultasResponse{
