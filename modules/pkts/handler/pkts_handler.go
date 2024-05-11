@@ -33,7 +33,11 @@ func (ph *PKTSHandler) GetAllPKTS(ctx context.Context, req *emptypb.Empty) (*pb.
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetAllPKTS] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetAllPKTSResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var pktsArr []*pb.PKTS
@@ -54,11 +58,19 @@ func (ph *PKTSHandler) GetPKTSByNim(ctx context.Context, req *pb.GetPKTSByNimReq
 	if err != nil {
 		if pkts == nil {
 			log.Println("WARNING: [PKTSHandler - GetPKTSByNim] Resource pkts not found for nim:", req.Nim)
-			return nil, status.Errorf(codes.NotFound, "pkts not found")
+			// return nil, status.Errorf(codes.NotFound, "pkts not found")
+			return &pb.GetPKTSResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "pkts not found",
+			}, status.Errorf(codes.NotFound, "pkts not found")
 		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetPKTSByNim] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetPKTSResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	pktProto := entity.ConvertEntityToProto(pkts)
@@ -78,7 +90,11 @@ func (ph *PKTSHandler) CreatePKTS(ctx context.Context, req *pb.PKTS) (*pb.GetPKT
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - CreatePKTS] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetPKTSResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	pktProto := entity.ConvertEntityToProto(pkts)
@@ -181,7 +197,11 @@ func (ph *PKTSHandler) UpdatePKTS(ctx context.Context, req *pb.PKTS) (*pb.GetPKT
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - UpdatePKTS] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetPKTSResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	pktsProto := entity.ConvertEntityToProto(pkt)
@@ -198,7 +218,11 @@ func (ph *PKTSHandler) GetNimByDataAtasan(ctx context.Context, req *pb.GetNimByD
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetNimByDataAtasan] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetNimByDataAtasanResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	result := make([]string, len(nims))
@@ -218,7 +242,11 @@ func (ph *PKTSHandler) ExportPKTSReport(ctx context.Context, req *pb.ExportPKTSR
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - ExportPKTSReport] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.ExportPKTSReportResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	pktsBytes := pkts.Bytes()
@@ -235,7 +263,11 @@ func (ph *PKTSHandler) GetPKTSRekapByProdi(ctx context.Context, req *pb.GetPKTSR
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetPKTSRekapByProdi] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetPKTSRekapByProdiResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var pktsRekapArr []*pb.PKTSRekapByProdi
