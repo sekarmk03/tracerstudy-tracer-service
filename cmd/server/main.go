@@ -5,6 +5,7 @@ import (
 	"tracerstudy-tracer-service/common/config"
 
 	gormConn "tracerstudy-tracer-service/common/gorm"
+	commonJwt "tracerstudy-tracer-service/common/jwt"
 	"tracerstudy-tracer-service/common/mysql"
 	"tracerstudy-tracer-service/server"
 
@@ -38,7 +39,9 @@ func main() {
 	checkError(gerr)
 	// errUtils.ConvertToRestError(gerr)
 
-	grpcServer := server.NewGrpcServer(cfg.Port.GRPC, /*jwtManager*/)
+	jwtManager := commonJwt.NewJWT(cfg.JWT.JwtSecretKey, cfg.JWT.TokenDuration)
+
+	grpcServer := server.NewGrpcServer(cfg.Port.GRPC, jwtManager)
 	grpcConn := server.InitGRPCConn(fmt.Sprintf("127.0.0.1:%v", cfg.Port.GRPC), false, "")
 
 	registerGrpcHandlers(grpcServer.Server, *cfg, db, /*jwtManager,*/ grpcConn)

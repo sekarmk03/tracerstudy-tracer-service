@@ -1,6 +1,8 @@
 package config
 
 import (
+	"time"
+
 	"github.com/joeshaw/envdecode"
 	"github.com/joho/godotenv"
 	"github.com/pkg/errors"
@@ -11,6 +13,7 @@ type Config struct {
 	Port        Port
 	MySQL       MySQL
 	SIAK_API    SIAK_API
+	JWT       JWTConfig
 }
 
 type Port struct {
@@ -29,6 +32,11 @@ type MySQL struct {
 type SIAK_API struct {
 	URL string `env:"SIAK_API_URL"`
 	KEY string `env:"SIAK_API_KEY"`
+}
+
+type JWTConfig struct {
+	JwtSecretKey  string        `env:"JWT_SECRET_KEY"`
+	TokenDuration time.Duration `env:"JWT_DURATION,default=30m"`
 }
 
 func NewConfig(env string) (*Config, error) {
