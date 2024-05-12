@@ -10,6 +10,7 @@ import (
 	"tracerstudy-tracer-service/modules/userstudy/service"
 	"tracerstudy-tracer-service/pb"
 
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -32,7 +33,11 @@ func (uh *UserStudyHandler) GetAllUserStudy(ctx context.Context, req *emptypb.Em
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - GetAllUserStudy] Error while get all user study:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.MultipleUserStudyResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var userStudyArr []*pb.UserStudy
@@ -51,12 +56,25 @@ func (uh *UserStudyHandler) GetAllUserStudy(ctx context.Context, req *emptypb.Em
 func (uh *UserStudyHandler) GetUserStudyByNim(ctx context.Context, req *pb.GetUserStudyByNimRequest) (*pb.SingleUserStudyResponse, error) {
 	userStudy, err := uh.userStudySvc.FindByNim(ctx, req.GetNim(), req.GetEmailResponden(), req.GetHpResponden())
 	if err != nil {
+		if userStudy == nil {
+			log.Println("WARNING: [UserStudyHandler - GetUserStudyByNim] Resource user study not found for nim:", req.GetNim())
+			// return nil, status.Errorf(codes.NotFound, "user study not found")
+			return &pb.SingleUserStudyResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "user study not found",
+			}, status.Errorf(codes.NotFound, "user study not found")
+		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - GetUserStudyByNim] Error while get user study by nim:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.SingleUserStudyResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	userStudyProto := entity.ConvertEntityToProto(userStudy)
+
 	return &pb.SingleUserStudyResponse{
 		Code:    uint32(http.StatusOK),
 		Message: "get user study by nim success",
@@ -88,7 +106,11 @@ func (uh *UserStudyHandler) UpdateUserStudy(ctx context.Context, req *pb.UserStu
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - UpdateUserStudy] Error while update user study:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.SingleUserStudyResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	userStudyProto := entity.ConvertEntityToProto(userStudy)
@@ -105,7 +127,11 @@ func (uh *UserStudyHandler) CreateUserStudy(ctx context.Context, req *pb.UserStu
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - CreateUserStudy] Error while create user study:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.SingleUserStudyResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	userStudyProto := entity.ConvertEntityToProto(userStudy)
@@ -122,7 +148,11 @@ func (uh *UserStudyHandler) ExportUSReport(ctx context.Context, req *emptypb.Emp
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - ExportUSReport] Internal server error:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.ExportUSReportResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	usBytes := us.Bytes()
