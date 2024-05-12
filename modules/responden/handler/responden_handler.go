@@ -12,6 +12,7 @@ import (
 	resSvc "tracerstudy-tracer-service/modules/responden/service"
 	"tracerstudy-tracer-service/pb"
 
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -36,7 +37,11 @@ func (rh *RespondenHandler) GetAllResponden(ctx context.Context, req *emptypb.Em
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - GetAllResponden] Error while get all responden:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetAllRespondenResponse{
+			Code:    uint32(http.StatusOK),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var respondenArr []*pb.Responden
@@ -55,9 +60,21 @@ func (rh *RespondenHandler) GetAllResponden(ctx context.Context, req *emptypb.Em
 func (rh *RespondenHandler) GetRespondenByNim(ctx context.Context, req *pb.GetRespondenByNimRequest) (*pb.GetRespondenByNimResponse, error) {
 	responden, err := rh.respondenSvc.FindByNim(ctx, req.GetNim())
 	if err != nil {
+		if responden == nil {
+			log.Println("WARNING: [RespondenHandler - GetRespondenByNim] Resource responden not found for nim:", req.GetNim())
+			// return nil, status.Errorf(codes.NotFound, "responden not found")
+			return &pb.GetRespondenByNimResponse{
+				Code:    uint32(http.StatusNotFound),
+				Message: "responden not found",
+			}, status.Errorf(codes.NotFound, "responden not found")
+		}
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - GetRespondenByNim] Error while get responden by nim:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetRespondenByNimResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	respondenProto := entity.ConvertEntityToProto(responden)
@@ -74,7 +91,11 @@ func (rh *RespondenHandler) UpdateRespondenFromSiak(ctx context.Context, req *pb
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: RespondenHandler-UpdateRespondenFromSiak] Error while fetch mhsbiodata from siak:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.UpdateRespondenResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var kodeProdi string
@@ -111,7 +132,11 @@ func (rh *RespondenHandler) UpdateRespondenFromSiak(ctx context.Context, req *pb
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - UpdateRespondenFromSiak] Error while update responden from siak:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.UpdateRespondenResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	respondenProto := entity.ConvertEntityToProto(responden)
@@ -129,7 +154,11 @@ func (rh *RespondenHandler) CreateResponden(ctx context.Context, req *pb.CreateR
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - CreateResponden] Error while create responden:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.CreateRespondenResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	respondenProto := entity.ConvertEntityToProto(responden)
@@ -154,7 +183,11 @@ func (rh *RespondenHandler) UpdateResponden(ctx context.Context, req *pb.Respond
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - UpdateResponden] Error while update responden:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.UpdateRespondenResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	respondenProto := entity.ConvertEntityToProto(responden)
@@ -171,7 +204,11 @@ func (rh *RespondenHandler) GetRespondenByNimList(ctx context.Context, req *pb.G
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - GetRespondenByNimList] Error while get responden by nim list:", parseError.Message)
-		return nil, status.Errorf(parseError.Code, parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetAllRespondenResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	var respondenArr []*pb.Responden
