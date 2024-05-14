@@ -39,9 +39,9 @@ var roles = AccessibleRoles{
 		"GetPKTSByNim":        {1, 2, 3, 4, 5, 6, 7},
 		"CreatePKTS":          {1, 2, 5, 6},
 		"UpdatePKTS":          {1, 2, 5, 6},
-		// "GetNimByDataAtasan":  {1, 2, 3, 4, 5, 6, 7},
 		"ExportPKTSReport":    {1, 2, 3, 4, 5},
 		"GetPKTSRekapByProdi": {1, 2, 3, 4, 5},
+		// "GetNimByDataAtasan":  {1, 2, 3, 4, 5, 6, 7},
 	},
 	"/" + BasePath + "." + ProdiSvc + "/": {
 		"GetAllProdi":    {1, 2, 3, 4, 5, 6, 7},
