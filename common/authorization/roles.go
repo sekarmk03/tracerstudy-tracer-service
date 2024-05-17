@@ -7,9 +7,10 @@ type AccessibleRoles map[string]map[string][]uint32
 	2. Admin
 	3. Manager
 	4. Executive
-	5. Prodi
+	5. Admin Prodi
 	6. Alumni
 	7. Pengguna Alumni
+	8. Admin Post
 */
 
 const (
