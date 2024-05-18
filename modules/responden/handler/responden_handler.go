@@ -7,7 +7,7 @@ import (
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
 	"tracerstudy-tracer-service/common/utils"
-	mhsbSvc "tracerstudy-tracer-service/modules/mhsbiodata/service"
+	mhsbSvc "tracerstudy-tracer-service/modules/mhsbiodataapi/service"
 	"tracerstudy-tracer-service/modules/responden/entity"
 	resSvc "tracerstudy-tracer-service/modules/responden/service"
 	"tracerstudy-tracer-service/pb"
@@ -21,14 +21,14 @@ type RespondenHandler struct {
 	pb.UnimplementedRespondenServiceServer
 	config        config.Config
 	respondenSvc  resSvc.RespondenServiceUseCase
-	mhsbiodataSvc mhsbSvc.MhsBiodataServiceUseCase
+	mhsbiodataapiSvc mhsbSvc.MhsBiodataApiServiceUseCase
 }
 
-func NewRespondenHandler(config config.Config, respondenService resSvc.RespondenServiceUseCase, mhsbiodataService mhsbSvc.MhsBiodataServiceUseCase) *RespondenHandler {
+func NewRespondenHandler(config config.Config, respondenService resSvc.RespondenServiceUseCase, mhsbiodataapiService mhsbSvc.MhsBiodataApiServiceUseCase) *RespondenHandler {
 	return &RespondenHandler{
 		config:        config,
 		respondenSvc:  respondenService,
-		mhsbiodataSvc: mhsbiodataService,
+		mhsbiodataapiSvc: mhsbiodataapiService,
 	}
 }
 
@@ -87,7 +87,7 @@ func (rh *RespondenHandler) GetRespondenByNim(ctx context.Context, req *pb.GetRe
 }
 
 func (rh *RespondenHandler) UpdateRespondenFromSiak(ctx context.Context, req *pb.UpdateRespondenFromSiakRequest) (*pb.UpdateRespondenResponse, error) {
-	mhsbiodata, err := rh.mhsbiodataSvc.FetchMhsBiodataByNimFromSiakApi(req.GetNim())
+	mhsbiodata, err := rh.mhsbiodataapiSvc.FetchMhsBiodataByNimFromSiakApi(req.GetNim())
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: RespondenHandler-UpdateRespondenFromSiak] Error while fetch mhsbiodata from siak:", parseError.Message)

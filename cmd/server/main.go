@@ -11,7 +11,7 @@ import (
 
 	fakultasModule "tracerstudy-tracer-service/modules/fakultas"
 	kabkotaModule "tracerstudy-tracer-service/modules/kabkota"
-	mhsbiodataModule "tracerstudy-tracer-service/modules/mhsbiodata"
+	mhsbiodataapiModule "tracerstudy-tracer-service/modules/mhsbiodataapi"
 	pktsModule "tracerstudy-tracer-service/modules/pkts"
 	prodiModule "tracerstudy-tracer-service/modules/prodi"
 	provinsiModule "tracerstudy-tracer-service/modules/provinsi"
@@ -54,7 +54,7 @@ func registerGrpcHandlers(server *grpc.Server, cfg config.Config, db *gorm.DB, /
 	prodiModule.InitGrpc(server, cfg, db, grpcConn)
 	provinsiModule.InitGrpc(server, cfg, db, grpcConn)
 	kabkotaModule.InitGrpc(server, cfg, db, grpcConn)
-	mhsbiodataModule.InitGrpc(server, cfg, db, grpcConn)
+	mhsbiodataapiModule.InitGrpc(server, cfg, db, grpcConn)
 	respondenModule.InitGrpc(server, cfg, db, grpcConn)
 	pktsModule.InitGrpc(server, cfg, db, grpcConn)
 	userstudyModule.InitGrpc(server, cfg, db, grpcConn)

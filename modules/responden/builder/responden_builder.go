@@ -2,7 +2,7 @@ package builder
 
 import (
 	"tracerstudy-tracer-service/common/config"
-	mhsbSvc "tracerstudy-tracer-service/modules/mhsbiodata/service"
+	mhsbSvc "tracerstudy-tracer-service/modules/mhsbiodataapi/service"
 	"tracerstudy-tracer-service/modules/responden/handler"
 	"tracerstudy-tracer-service/modules/responden/repository"
 	respSvc "tracerstudy-tracer-service/modules/responden/service"
@@ -15,7 +15,7 @@ func BuildRespondenHandler(cfg config.Config, db *gorm.DB, grpcConn *grpc.Client
 	respondenRepo := repository.NewRespondenRepository(db)
 	respondenSvc := respSvc.NewRespondenService(cfg, respondenRepo)
 
-	mhsbiodataSvc := mhsbSvc.NewMhsBiodataService(cfg)
+	mhsbiodataapiSvc := mhsbSvc.NewMhsBiodataApiService(cfg)
 
-	return handler.NewRespondenHandler(cfg, respondenSvc, mhsbiodataSvc)
+	return handler.NewRespondenHandler(cfg, respondenSvc, mhsbiodataapiSvc)
 }

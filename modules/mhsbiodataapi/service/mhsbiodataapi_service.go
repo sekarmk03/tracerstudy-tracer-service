@@ -12,7 +12,7 @@ import (
 	"tracerstudy-tracer-service/common/config"
 
 	// "tracerstudy-tracer-service/common/errors"
-	"tracerstudy-tracer-service/modules/mhsbiodata/entity"
+	"tracerstudy-tracer-service/modules/mhsbiodataapi/entity"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -25,21 +25,21 @@ const (
 	sleepTime     = 500 * time.Millisecond
 )
 
-type MhsBiodataService struct {
+type MhsBiodataApiService struct {
 	cfg config.Config
 }
 
-type MhsBiodataServiceUseCase interface {
-	FetchMhsBiodataByNimFromSiakApi(nim string) (*entity.MhsBiodata, error)
+type MhsBiodataApiServiceUseCase interface {
+	FetchMhsBiodataByNimFromSiakApi(nim string) (*entity.MhsBiodataApi, error)
 }
 
-func NewMhsBiodataService(cfg config.Config) *MhsBiodataService {
-	return &MhsBiodataService{
+func NewMhsBiodataApiService(cfg config.Config) *MhsBiodataApiService {
+	return &MhsBiodataApiService{
 		cfg: cfg,
 	}
 }
 
-func (svc *MhsBiodataService) FetchMhsBiodataByNimFromSiakApi(nim string) (*entity.MhsBiodata, error) {
+func (svc *MhsBiodataApiService) FetchMhsBiodataByNimFromSiakApi(nim string) (*entity.MhsBiodataApi, error) {
 	payload := map[string]string{"nim": nim}
 	payloadBytes, err := json.Marshal(payload)
 	if err != nil {
@@ -95,7 +95,7 @@ func (svc *MhsBiodataService) FetchMhsBiodataByNimFromSiakApi(nim string) (*enti
 			return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
 		}
 
-		var apiResponse []entity.MhsBiodata
+		var apiResponse []entity.MhsBiodataApi
 		if err := json.Unmarshal(body, &apiResponse); err != nil {
 			log.Println("ERROR: [MhsBiodataService - FetchMhsBiodataByNimFromSiakApi] Error while unmarshalling HTTP response body:", err)
 			return nil, status.Errorf(codes.Internal, "internal server error: %v", err)

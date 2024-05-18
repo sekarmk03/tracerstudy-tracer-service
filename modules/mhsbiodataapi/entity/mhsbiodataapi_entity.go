@@ -2,7 +2,7 @@ package entity
 
 import "tracerstudy-tracer-service/pb"
 
-type MhsBiodata struct {
+type MhsBiodataApi struct {
 	NIM        string `json:"nim"`
 	NAMA       string `json:"nama"`
 	IPK        string `json:"ipk"`
@@ -23,8 +23,8 @@ type MhsBiodata struct {
 	KODESTATUS string `json:"kodestatus"`
 }
 
-func NewMhsBiodata(nim, nama, ipk, hp, email, kodepstd, jenjang, prodi, namapst, kodepst, kodefak, namafak, jlrmasuk, thnmasuk, lamastd, tglsidang, kodejk, kodestatus string) *MhsBiodata {
-	return &MhsBiodata{
+func NewMhsBiodataApi(nim, nama, ipk, hp, email, kodepstd, jenjang, prodi, namapst, kodepst, kodefak, namafak, jlrmasuk, thnmasuk, lamastd, tglsidang, kodejk, kodestatus string) *MhsBiodataApi {
+	return &MhsBiodataApi{
 		NIM:        nim,
 		NAMA:       nama,
 		IPK:        ipk,
@@ -46,8 +46,8 @@ func NewMhsBiodata(nim, nama, ipk, hp, email, kodepstd, jenjang, prodi, namapst,
 	}
 }
 
-func ConvertEntityToProto(m *MhsBiodata) *pb.MhsBiodata {
-	return &pb.MhsBiodata{
+func ConvertEntityToProto(m *MhsBiodataApi) *pb.MhsBiodataApi {
+	return &pb.MhsBiodataApi{
 		NIM:        m.NIM,
 		NAMA:       m.NAMA,
 		IPK:        m.IPK,
