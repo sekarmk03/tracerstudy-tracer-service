@@ -16,6 +16,7 @@ type Responden struct {
 	Id            uint32         `json:"id"`
 	Nim           string         `json:"nim"`
 	Nama          string         `json:"nama"`
+	StatusUpdate  uint32         `json:"status_update"`
 	JalurMasuk    string         `json:"jalur_masuk"`
 	TahunMasuk    string         `json:"tahun_masuk"`
 	LamaStudi     uint32         `json:"lama_studi"`
@@ -35,11 +36,12 @@ type Responden struct {
 	DeletedAt     gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
 
-func NewResponden(id uint32, nim, nama, jlrMasuk, thnMasuk string, lamaStudi uint32, kodeFak, kodeProdi, jenisKel, email, hp, ipk, tglSidang, thnSidang, tglWisuda, nik, npwp string) *Responden {
+func NewResponden(id uint32, nim, nama string, statusUpdate uint32, jlrMasuk, thnMasuk string, lamaStudi uint32, kodeFak, kodeProdi, jenisKel, email, hp, ipk, tglSidang, thnSidang, tglWisuda, nik, npwp string) *Responden {
 	return &Responden{
 		Id:            id,
 		Nim:           nim,
 		Nama:          nama,
+		StatusUpdate:  statusUpdate,
 		JalurMasuk:    jlrMasuk,
 		TahunMasuk:    thnMasuk,
 		LamaStudi:     lamaStudi,
@@ -68,6 +70,7 @@ func ConvertEntityToProto(r *Responden) *pb.Responden {
 		Id:            r.Id,
 		Nim:           r.Nim,
 		Nama:          r.Nama,
+		StatusUpdate:  r.StatusUpdate,
 		JalurMasuk:    r.JalurMasuk,
 		TahunMasuk:    r.TahunMasuk,
 		LamaStudi:     r.LamaStudi,
@@ -92,6 +95,7 @@ func ConvertProtoToEntity(r *pb.Responden) *Responden {
 		Id:            r.GetId(),
 		Nim:           r.GetNim(),
 		Nama:          r.GetNama(),
+		StatusUpdate:  r.GetStatusUpdate(),
 		JalurMasuk:    r.GetJalurMasuk(),
 		TahunMasuk:    r.GetTahunMasuk(),
 		LamaStudi:     r.GetLamaStudi(),

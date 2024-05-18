@@ -10,23 +10,24 @@ message Responden {
     uint32 id = 1;
     string nim = 2;
     string nama = 3;
-    string jalur_masuk = 4;
-    string tahun_masuk = 5;
-    uint32 lama_studi = 6;
-    string kode_fakultas = 7;
-    string kode_prodi = 8;
-    string jenis_kelamin = 9;
-    string email = 10;
-    string hp = 11;
-    string ipk = 12;
-    string tanggal_sidang = 13;
-    string tahun_sidang = 14;
-    string tanggal_wisuda = 15;
-    string nik = 16;
-    string npwp = 17;
-    google.protobuf.Timestamp created_at = 18;
-    google.protobuf.Timestamp updated_at = 19;
-    google.protobuf.Timestamp deleted_at = 20;
+    uint32 status_update = 4;
+    string jalur_masuk = 5;
+    string tahun_masuk = 6;
+    uint32 lama_studi = 7;
+    string kode_fakultas = 8;
+    string kode_prodi = 9;
+    string jenis_kelamin = 10;
+    string email = 11;
+    string hp = 12;
+    string ipk = 13;
+    string tanggal_sidang = 14;
+    string tahun_sidang = 15;
+    string tanggal_wisuda = 16;
+    string nik = 17;
+    string npwp = 18;
+    google.protobuf.Timestamp created_at = 19;
+    google.protobuf.Timestamp updated_at = 20;
+    google.protobuf.Timestamp deleted_at = 21;
 }
 
 message GetAllRespondenResponse {

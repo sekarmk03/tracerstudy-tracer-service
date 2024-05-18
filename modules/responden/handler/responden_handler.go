@@ -114,6 +114,7 @@ func (rh *RespondenHandler) UpdateRespondenFromSiak(ctx context.Context, req *pb
 
 	convertedProto := &entity.Responden{
 		Nama:          mhsbiodata.NAMA,
+		StatusUpdate:  1,
 		JalurMasuk:    mhsbiodata.JLRMASUK,
 		TahunMasuk:    mhsbiodata.THNMASUK,
 		LamaStudi:     uint32(utils.ConvStrToUint(mhsbiodata.LAMASTD, "lama_studi")),
@@ -172,6 +173,7 @@ func (rh *RespondenHandler) CreateResponden(ctx context.Context, req *pb.CreateR
 
 func (rh *RespondenHandler) UpdateResponden(ctx context.Context, req *pb.Responden) (*pb.UpdateRespondenResponse, error) {
 	respDataUpdate := &entity.Responden{
+		StatusUpdate:  2,
 		Email:         req.GetEmail(),
 		Hp:            req.GetHp(),
 		Nik:           req.GetNik(),

@@ -66,6 +66,7 @@ func (svc *RespondenService) Update(ctx context.Context, nim string, fields *ent
 	}
 
 	utils.AddItemToMap(updateMap, "nama", fields.Nama)
+	utils.AddItemToMap(updateMap, "status_update", fields.StatusUpdate)
 	utils.AddItemToMap(updateMap, "jalur_masuk", fields.JalurMasuk)
 	utils.AddItemToMap(updateMap, "tahun_masuk", fields.TahunMasuk)
 	utils.AddItemToMap(updateMap, "lama_studi", fields.LamaStudi)

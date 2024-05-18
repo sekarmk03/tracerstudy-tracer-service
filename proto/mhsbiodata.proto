@@ -21,6 +21,7 @@ message MhsBiodata {
     string LAMASTD = 15;
     string TGLSIDANG = 16;
     string KODEJK = 17;
+    string KODESTATUS = 18;
 }
 
 message MhsBiodataRequest {
@@ -33,6 +34,13 @@ message MhsBiodataResponse {
     MhsBiodata data = 3;
 }
 
+message CheckMhsAlumniResponse {
+    uint32 code = 1;
+    string message = 2;
+    bool isAlumni = 3;
+}
+
 service MhsBiodataService {
     rpc FetchMhsBiodataByNim(MhsBiodataRequest) returns (MhsBiodataResponse) {};
+    rpc CheckMhsAlumni(MhsBiodataRequest) returns (CheckMhsAlumniResponse) {};
 }

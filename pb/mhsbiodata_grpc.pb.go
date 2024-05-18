@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	MhsBiodataService_FetchMhsBiodataByNim_FullMethodName = "/tracer_study_grpc.MhsBiodataService/FetchMhsBiodataByNim"
+	MhsBiodataService_CheckMhsAlumni_FullMethodName       = "/tracer_study_grpc.MhsBiodataService/CheckMhsAlumni"
 )
 
 // MhsBiodataServiceClient is the client API for MhsBiodataService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MhsBiodataServiceClient interface {
 	FetchMhsBiodataByNim(ctx context.Context, in *MhsBiodataRequest, opts ...grpc.CallOption) (*MhsBiodataResponse, error)
+	CheckMhsAlumni(ctx context.Context, in *MhsBiodataRequest, opts ...grpc.CallOption) (*CheckMhsAlumniResponse, error)
 }
 
 type mhsBiodataServiceClient struct {
@@ -46,11 +48,21 @@ func (c *mhsBiodataServiceClient) FetchMhsBiodataByNim(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *mhsBiodataServiceClient) CheckMhsAlumni(ctx context.Context, in *MhsBiodataRequest, opts ...grpc.CallOption) (*CheckMhsAlumniResponse, error) {
+	out := new(CheckMhsAlumniResponse)
+	err := c.cc.Invoke(ctx, MhsBiodataService_CheckMhsAlumni_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MhsBiodataServiceServer is the server API for MhsBiodataService service.
 // All implementations must embed UnimplementedMhsBiodataServiceServer
 // for forward compatibility
 type MhsBiodataServiceServer interface {
 	FetchMhsBiodataByNim(context.Context, *MhsBiodataRequest) (*MhsBiodataResponse, error)
+	CheckMhsAlumni(context.Context, *MhsBiodataRequest) (*CheckMhsAlumniResponse, error)
 	mustEmbedUnimplementedMhsBiodataServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedMhsBiodataServiceServer struct {
 
 func (UnimplementedMhsBiodataServiceServer) FetchMhsBiodataByNim(context.Context, *MhsBiodataRequest) (*MhsBiodataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FetchMhsBiodataByNim not implemented")
+}
+func (UnimplementedMhsBiodataServiceServer) CheckMhsAlumni(context.Context, *MhsBiodataRequest) (*CheckMhsAlumniResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CheckMhsAlumni not implemented")
 }
 func (UnimplementedMhsBiodataServiceServer) mustEmbedUnimplementedMhsBiodataServiceServer() {}
 
@@ -92,6 +107,24 @@ func _MhsBiodataService_FetchMhsBiodataByNim_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MhsBiodataService_CheckMhsAlumni_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MhsBiodataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MhsBiodataServiceServer).CheckMhsAlumni(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MhsBiodataService_CheckMhsAlumni_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MhsBiodataServiceServer).CheckMhsAlumni(ctx, req.(*MhsBiodataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MhsBiodataService_ServiceDesc is the grpc.ServiceDesc for MhsBiodataService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var MhsBiodataService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FetchMhsBiodataByNim",
 			Handler:    _MhsBiodataService_FetchMhsBiodataByNim_Handler,
+		},
+		{
+			MethodName: "CheckMhsAlumni",
+			Handler:    _MhsBiodataService_CheckMhsAlumni_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
