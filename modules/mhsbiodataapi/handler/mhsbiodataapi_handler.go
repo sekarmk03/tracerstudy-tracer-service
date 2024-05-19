@@ -39,7 +39,7 @@ func (mbh *MhsBiodataApiHandler) FetchMhsBiodataByNim(ctx context.Context, req *
 			return &pb.MhsBiodataApiResponse{
 				Code:    uint32(http.StatusNotFound),
 				Message: "mhsbiodata not found",
-			}, status.Errorf(codes.NotFound, "resource not found")
+			}, status.Errorf(codes.NotFound, "mhsbiodata not found")
 		}
 
 		parseError := errors.ParseError(err)
@@ -73,7 +73,7 @@ func (mbh *MhsBiodataApiHandler) CheckMhsAlumni(ctx context.Context, req *pb.Mhs
 				Code:     uint32(http.StatusNotFound),
 				Message:  "mhsbiodata not found",
 				IsAlumni: false,
-			}, status.Errorf(codes.NotFound, "resource not found")
+			}, status.Errorf(codes.NotFound, "mhsbiodata not found")
 		}
 
 		parseError := errors.ParseError(err)
