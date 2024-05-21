@@ -6,7 +6,10 @@ import (
 	"net/http"
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
+	pkSvc "tracerstudy-tracer-service/modules/pkts/service"
+	respSvc "tracerstudy-tracer-service/modules/responden/service"
 	"tracerstudy-tracer-service/modules/userstudy/entity"
+	respEntity "tracerstudy-tracer-service/modules/responden/entity"
 	"tracerstudy-tracer-service/modules/userstudy/service"
 	"tracerstudy-tracer-service/pb"
 
@@ -19,12 +22,21 @@ type UserStudyHandler struct {
 	pb.UnimplementedUserStudyServiceServer
 	config       config.Config
 	userStudySvc service.UserStudyServiceUseCase
+	respondenSvc respSvc.RespondenServiceUseCase
+	pktsSvc      pkSvc.PKTSServiceUseCase
 }
 
-func NewUserStudyHandler(config config.Config, userStudyService service.UserStudyServiceUseCase) *UserStudyHandler {
+func NewUserStudyHandler(
+	config config.Config,
+	userStudyService service.UserStudyServiceUseCase,
+	respondenService respSvc.RespondenServiceUseCase,
+	pktsService pkSvc.PKTSServiceUseCase,
+) *UserStudyHandler {
 	return &UserStudyHandler{
 		config:       config,
 		userStudySvc: userStudyService,
+		respondenSvc: respondenService,
+		pktsSvc:      pktsService,
 	}
 }
 
@@ -161,5 +173,49 @@ func (uh *UserStudyHandler) ExportUSReport(ctx context.Context, req *emptypb.Emp
 		Code:    uint32(http.StatusOK),
 		Message: "export user study report success",
 		Data:    usBytes,
+	}, nil
+}
+
+func (uh *UserStudyHandler) GetAlumniListByAtasan(ctx context.Context, req *pb.GetAlumniByAtasanRequest) (*pb.GetAlumniByAtasanResponse, error) {
+	nimList, err := uh.pktsSvc.FindByAtasan(ctx, req.GetNamaAtasan(), req.GetHpAtasan(), req.GetEmailAtasan())
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [UserStudyHandler - GetAlumniListByAtasan] Error while get alumni list by atasan:", parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetAlumniByAtasanResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	// Convert []*string to []string
+	stringNimList := make([]string, len(nimList))
+	for i, s := range nimList {
+		if s != nil {
+			stringNimList[i] = *s
+		}
+	}
+
+	alumniList, err := uh.respondenSvc.FindByNimList(ctx, stringNimList)
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [UserStudyHandler - GetAlumniListByAtasan] Error while get alumni list by atasan:", parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetAlumniByAtasanResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	var respondenProto []*pb.Responden
+	for _, a := range alumniList {
+		alumniProto := respEntity.ConvertEntityToProto(a)
+		respondenProto = append(respondenProto, alumniProto)
+	}
+
+	return &pb.GetAlumniByAtasanResponse{
+		Code:    uint32(http.StatusOK),
+		Message: "get alumni list by atasan success",
+		Data:    respondenProto,
 	}, nil
 }

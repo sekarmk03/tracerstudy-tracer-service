@@ -5,6 +5,7 @@ option go_package = "./;pb";
 
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
+import "responden.proto";
 
 message UserStudy {
     uint64 id = 1;
@@ -60,10 +61,23 @@ message ExportUSReportResponse {
     bytes data = 3;
 }
 
+message GetAlumniByAtasanRequest {
+    string nama_atasan = 1;
+    string hp_atasan = 2;
+    string email_atasan = 3;
+}
+
+message GetAlumniByAtasanResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated Responden data = 3;
+}
+
 service UserStudyService {
-    rpc GetAllUserStudy(google.protobuf.Empty) returns (MultipleUserStudyResponse) {}
-    rpc GetUserStudyByNim(GetUserStudyByNimRequest) returns (SingleUserStudyResponse) {}
-    rpc CreateUserStudy(UserStudy) returns (SingleUserStudyResponse) {}
-    rpc UpdateUserStudy(UserStudy) returns (SingleUserStudyResponse) {}
-    rpc ExportUSReport(google.protobuf.Empty) returns (ExportUSReportResponse) {}
+    rpc GetAllUserStudy(google.protobuf.Empty) returns (MultipleUserStudyResponse) {};
+    rpc GetUserStudyByNim(GetUserStudyByNimRequest) returns (SingleUserStudyResponse) {};
+    rpc CreateUserStudy(UserStudy) returns (SingleUserStudyResponse) {};
+    rpc UpdateUserStudy(UserStudy) returns (SingleUserStudyResponse) {};
+    rpc ExportUSReport(google.protobuf.Empty) returns (ExportUSReportResponse) {};
+    rpc GetAlumniListByAtasan(GetAlumniByAtasanRequest) returns (GetAlumniByAtasanResponse) {};
 }

@@ -20,11 +20,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserStudyService_GetAllUserStudy_FullMethodName   = "/tracer_study_grpc.UserStudyService/GetAllUserStudy"
-	UserStudyService_GetUserStudyByNim_FullMethodName = "/tracer_study_grpc.UserStudyService/GetUserStudyByNim"
-	UserStudyService_CreateUserStudy_FullMethodName   = "/tracer_study_grpc.UserStudyService/CreateUserStudy"
-	UserStudyService_UpdateUserStudy_FullMethodName   = "/tracer_study_grpc.UserStudyService/UpdateUserStudy"
-	UserStudyService_ExportUSReport_FullMethodName    = "/tracer_study_grpc.UserStudyService/ExportUSReport"
+	UserStudyService_GetAllUserStudy_FullMethodName       = "/tracer_study_grpc.UserStudyService/GetAllUserStudy"
+	UserStudyService_GetUserStudyByNim_FullMethodName     = "/tracer_study_grpc.UserStudyService/GetUserStudyByNim"
+	UserStudyService_CreateUserStudy_FullMethodName       = "/tracer_study_grpc.UserStudyService/CreateUserStudy"
+	UserStudyService_UpdateUserStudy_FullMethodName       = "/tracer_study_grpc.UserStudyService/UpdateUserStudy"
+	UserStudyService_ExportUSReport_FullMethodName        = "/tracer_study_grpc.UserStudyService/ExportUSReport"
+	UserStudyService_GetAlumniListByAtasan_FullMethodName = "/tracer_study_grpc.UserStudyService/GetAlumniListByAtasan"
 )
 
 // UserStudyServiceClient is the client API for UserStudyService service.
@@ -36,6 +37,7 @@ type UserStudyServiceClient interface {
 	CreateUserStudy(ctx context.Context, in *UserStudy, opts ...grpc.CallOption) (*SingleUserStudyResponse, error)
 	UpdateUserStudy(ctx context.Context, in *UserStudy, opts ...grpc.CallOption) (*SingleUserStudyResponse, error)
 	ExportUSReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ExportUSReportResponse, error)
+	GetAlumniListByAtasan(ctx context.Context, in *GetAlumniByAtasanRequest, opts ...grpc.CallOption) (*GetAlumniByAtasanResponse, error)
 }
 
 type userStudyServiceClient struct {
@@ -91,6 +93,15 @@ func (c *userStudyServiceClient) ExportUSReport(ctx context.Context, in *emptypb
 	return out, nil
 }
 
+func (c *userStudyServiceClient) GetAlumniListByAtasan(ctx context.Context, in *GetAlumniByAtasanRequest, opts ...grpc.CallOption) (*GetAlumniByAtasanResponse, error) {
+	out := new(GetAlumniByAtasanResponse)
+	err := c.cc.Invoke(ctx, UserStudyService_GetAlumniListByAtasan_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserStudyServiceServer is the server API for UserStudyService service.
 // All implementations must embed UnimplementedUserStudyServiceServer
 // for forward compatibility
@@ -100,6 +111,7 @@ type UserStudyServiceServer interface {
 	CreateUserStudy(context.Context, *UserStudy) (*SingleUserStudyResponse, error)
 	UpdateUserStudy(context.Context, *UserStudy) (*SingleUserStudyResponse, error)
 	ExportUSReport(context.Context, *emptypb.Empty) (*ExportUSReportResponse, error)
+	GetAlumniListByAtasan(context.Context, *GetAlumniByAtasanRequest) (*GetAlumniByAtasanResponse, error)
 	mustEmbedUnimplementedUserStudyServiceServer()
 }
 
@@ -121,6 +133,9 @@ func (UnimplementedUserStudyServiceServer) UpdateUserStudy(context.Context, *Use
 }
 func (UnimplementedUserStudyServiceServer) ExportUSReport(context.Context, *emptypb.Empty) (*ExportUSReportResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportUSReport not implemented")
+}
+func (UnimplementedUserStudyServiceServer) GetAlumniListByAtasan(context.Context, *GetAlumniByAtasanRequest) (*GetAlumniByAtasanResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAlumniListByAtasan not implemented")
 }
 func (UnimplementedUserStudyServiceServer) mustEmbedUnimplementedUserStudyServiceServer() {}
 
@@ -225,6 +240,24 @@ func _UserStudyService_ExportUSReport_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserStudyService_GetAlumniListByAtasan_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlumniByAtasanRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserStudyServiceServer).GetAlumniListByAtasan(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserStudyService_GetAlumniListByAtasan_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserStudyServiceServer).GetAlumniListByAtasan(ctx, req.(*GetAlumniByAtasanRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserStudyService_ServiceDesc is the grpc.ServiceDesc for UserStudyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -251,6 +284,10 @@ var UserStudyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExportUSReport",
 			Handler:    _UserStudyService_ExportUSReport_Handler,
+		},
+		{
+			MethodName: "GetAlumniListByAtasan",
+			Handler:    _UserStudyService_GetAlumniListByAtasan_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
