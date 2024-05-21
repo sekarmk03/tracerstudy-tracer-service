@@ -6,10 +6,11 @@ import (
 	"net/http"
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
+	"tracerstudy-tracer-service/common/utils"
 	pkSvc "tracerstudy-tracer-service/modules/pkts/service"
+	respEntity "tracerstudy-tracer-service/modules/responden/entity"
 	respSvc "tracerstudy-tracer-service/modules/responden/service"
 	"tracerstudy-tracer-service/modules/userstudy/entity"
-	respEntity "tracerstudy-tracer-service/modules/responden/entity"
 	"tracerstudy-tracer-service/modules/userstudy/service"
 	"tracerstudy-tracer-service/pb"
 
@@ -96,6 +97,8 @@ func (uh *UserStudyHandler) GetUserStudyByNim(ctx context.Context, req *pb.GetUs
 
 func (uh *UserStudyHandler) UpdateUserStudy(ctx context.Context, req *pb.UserStudy) (*pb.SingleUserStudyResponse, error) {
 	convertedProto := &entity.UserStudy{
+		HpResponden:                       utils.FormatPhoneNumber(req.GetHpResponden()),
+		NamaResponden:                     req.GetNamaResponden(),
 		NamaInstansi:                      req.GetNamaInstansi(),
 		Jabatan:                           req.GetJabatan(),
 		AlamatInstansi:                    req.GetAlamatInstansi(),
@@ -135,7 +138,19 @@ func (uh *UserStudyHandler) UpdateUserStudy(ctx context.Context, req *pb.UserStu
 }
 
 func (uh *UserStudyHandler) CreateUserStudy(ctx context.Context, req *pb.UserStudy) (*pb.SingleUserStudyResponse, error) {
-	userStudy, err := uh.userStudySvc.Create(ctx, req.GetNamaResponden(), req.GetEmailResponden(), req.GetHpResponden(), req.GetNamaInstansi(), req.GetJabatan(), req.GetAlamatInstansi(), req.GetNimLulusan(), req.GetNamaLulusan(), req.GetProdiLulusan(), req.GetTahunLulusan())
+	userStudy, err := uh.userStudySvc.Create(
+		ctx,
+		req.GetNamaResponden(),
+		req.GetEmailResponden(),
+		utils.FormatPhoneNumber(req.GetHpResponden()),
+		req.GetNamaInstansi(),
+		req.GetJabatan(),
+		req.GetAlamatInstansi(),
+		req.GetNimLulusan(),
+		req.GetNamaLulusan(),
+		req.GetProdiLulusan(),
+		req.GetTahunLulusan(),
+	)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - CreateUserStudy] Error while create user study:", parseError.Message)

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
+	"tracerstudy-tracer-service/common/utils"
 	"tracerstudy-tracer-service/modules/pkts/entity"
 	"tracerstudy-tracer-service/modules/pkts/service"
 	"tracerstudy-tracer-service/pb"
@@ -188,7 +189,7 @@ func (ph *PKTSHandler) UpdatePKTS(ctx context.Context, req *pb.PKTS) (*pb.GetPKT
 		F1613:               req.GetF1613(),
 		F1614:               req.GetF1614(),
 		NamaAtasan:          req.GetNamaAtasan(),
-		HpAtasan:            req.GetHpAtasan(),
+		HpAtasan:            utils.FormatPhoneNumber(req.GetHpAtasan()),
 		EmailAtasan:         req.GetEmailAtasan(),
 		TinggalSelamaKuliah: req.GetTinggalSelamaKuliah(),
 	}
