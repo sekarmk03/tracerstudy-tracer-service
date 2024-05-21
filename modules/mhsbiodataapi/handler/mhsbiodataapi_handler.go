@@ -95,7 +95,7 @@ func (mbh *MhsBiodataApiHandler) CheckMhsAlumni(ctx context.Context, req *pb.Mhs
 
 	return &pb.CheckMhsAlumniResponse{
 		Code:     uint32(http.StatusOK),
-		Message:  "get mhs biodata success",
+		Message:  "get mhs status alumni success",
 		IsAlumni: isAlumni,
 	}, nil
 }

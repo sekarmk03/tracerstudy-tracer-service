@@ -39,7 +39,7 @@ func (p *PKTSRepository) FindAll(ctx context.Context, req any) ([]*entity.PKTS, 
 	defer span.End()
 
 	var pkts []*entity.PKTS
-	if err := p.db.Debug().WithContext(ctxSpan).Order("created_at desc").Find(&pkts).Error; err != nil {
+	if err := p.db.Debug().WithContext(ctxSpan).Order("created_at desc").Limit(50).Find(&pkts).Error; err != nil {
 		log.Println("ERROR: [PKTSRepository - FindAll] Internal server error:", err)
 		return nil, status.Errorf(codes.Internal, "%v", err)
 	}

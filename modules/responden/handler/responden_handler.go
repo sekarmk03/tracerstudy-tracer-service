@@ -114,7 +114,7 @@ func (rh *RespondenHandler) UpdateRespondenFromSiak(ctx context.Context, req *pb
 
 	convertedProto := &entity.Responden{
 		Nama:          mhsbiodata.NAMA,
-		StatusUpdate:  1,
+		StatusUpdate:  0,
 		JalurMasuk:    mhsbiodata.JLRMASUK,
 		TahunMasuk:    mhsbiodata.THNMASUK,
 		LamaStudi:     uint32(utils.ConvStrToUint(mhsbiodata.LAMASTD, "lama_studi")),
@@ -122,7 +122,7 @@ func (rh *RespondenHandler) UpdateRespondenFromSiak(ctx context.Context, req *pb
 		KodeProdi:     kodeProdi,
 		JenisKelamin:  mhsbiodata.KODEJK,
 		Email:         mhsbiodata.EMAIL,
-		Hp:            mhsbiodata.HP,
+		Hp:            utils.FormatPhoneNumber(mhsbiodata.HP),
 		Ipk:           mhsbiodata.IPK,
 		TanggalSidang: mhsbiodata.TGLSIDANG,
 		TahunSidang:   thnSidang,
@@ -173,11 +173,11 @@ func (rh *RespondenHandler) CreateResponden(ctx context.Context, req *pb.CreateR
 
 func (rh *RespondenHandler) UpdateResponden(ctx context.Context, req *pb.Responden) (*pb.UpdateRespondenResponse, error) {
 	respDataUpdate := &entity.Responden{
-		StatusUpdate:  2,
+		StatusUpdate:  1,
 		Email:         req.GetEmail(),
-		Hp:            req.GetHp(),
-		Nik:           req.GetNik(),
-		Npwp:          req.GetNpwp(),
+		Hp:            utils.FormatPhoneNumber(req.GetHp()),
+		Nik:           utils.CleanNumberText(req.GetNik()),
+		Npwp:          utils.CleanNumberText(req.GetNpwp()),
 		TanggalWisuda: req.GetTanggalWisuda(),
 	}
 

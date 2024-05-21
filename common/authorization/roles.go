@@ -16,7 +16,7 @@ type AccessibleRoles map[string]map[string][]uint32
 const (
 	BasePath      = "tracer_study_grpc"
 	KabKotaSvc    = "KabKotaService"
-	MhsBiodataSvc = "MhsBiodataService"
+	MhsBiodataApiSvc = "MhsBiodataApiService"
 	PktsSvc       = "PKTSService"
 	ProvinsiSvc   = "ProvinsiService"
 	RespondenSvc  = "RespondenService"
@@ -32,8 +32,8 @@ var roles = AccessibleRoles{
 		"UpdateKabKota":     {1, 2},
 		"DeleteKabKota":     {1, 2},
 	},
-	"/" + BasePath + "." + MhsBiodataSvc + "/": {
-		// "FetchMhsBiodataByNim": {1, 2, 3, 4, 5, 6},
+	"/" + BasePath + "." + MhsBiodataApiSvc + "/": {
+		"FetchMhsBiodataByNim": {1, 2, 3, 4, 5, 6},
 	},
 	"/" + BasePath + "." + PktsSvc + "/": {
 		"GetAllPKTS":          {1, 2, 3, 4, 5, 6, 7},

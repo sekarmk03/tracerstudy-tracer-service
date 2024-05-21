@@ -36,7 +36,7 @@ func (r *RespondenRepository) FindAll(ctx context.Context, req any) ([]*entity.R
 	defer span.End()
 
 	var responden []*entity.Responden
-	if err := r.db.Debug().WithContext(ctxSpan).Order("created_at desc").Find(&responden).Error; err != nil {
+	if err := r.db.Debug().WithContext(ctxSpan).Order("created_at desc").Limit(50).Find(&responden).Error; err != nil {
 		log.Println("ERROR: [RespondenRepository - FindAll] Internal server error:", err)
 		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}
