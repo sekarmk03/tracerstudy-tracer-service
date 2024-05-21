@@ -88,6 +88,11 @@ func (svc *PKTSService) Update(ctx context.Context, nim string, fields *entity.P
 
 	updateMap := make(map[string]interface{})
 
+	hpAtasanFormatted := ""
+	if fields.HpAtasan != "" {
+		hpAtasanFormatted = utils.FormatPhoneNumber(fields.HpAtasan)
+	}
+
 	utils.AddItemToMap(updateMap, "f8", fields.F8)
 	utils.AddItemToMap(updateMap, "f504", fields.F504)
 	utils.AddItemToMap(updateMap, "f502", fields.F502)
@@ -168,7 +173,7 @@ func (svc *PKTSService) Update(ctx context.Context, nim string, fields *entity.P
 	utils.AddItemToMap(updateMap, "f1613", fields.F1613)
 	utils.AddItemToMap(updateMap, "f1614", fields.F1614)
 	utils.AddItemToMap(updateMap, "nama_atasan", fields.NamaAtasan)
-	utils.AddItemToMap(updateMap, "hp_atasan", fields.HpAtasan)
+	utils.AddItemToMap(updateMap, "hp_atasan", hpAtasanFormatted)
 	utils.AddItemToMap(updateMap, "email_atasan", fields.EmailAtasan)
 	utils.AddItemToMap(updateMap, "tinggal_selama_kuliah", fields.TinggalSelamaKuliah)
 
