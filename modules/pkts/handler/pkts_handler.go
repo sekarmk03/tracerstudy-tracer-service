@@ -278,7 +278,7 @@ func (ph *PKTSHandler) GetPKTSRekapByProdi(ctx context.Context, req *pb.GetPKTSR
 
 	var pktsRekapArr []*pb.PKTSRekapByProdi
 	for _, p := range pktsRekap {
-		pktsRekapProto := entity.ConvertEntityPKTSRekapToProto(p)
+		pktsRekapProto := entity.ConvertEntityPKTSRekapByProdiToProto(p)
 		pktsRekapArr = append(pktsRekapArr, pktsRekapProto)
 	}
 

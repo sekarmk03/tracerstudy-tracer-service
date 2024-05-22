@@ -31,7 +31,7 @@ type PKTSRepositoryUseCase interface {
 	Update(ctx context.Context, pkts *entity.PKTS, updatedFields map[string]interface{}) (*entity.PKTS, error)
 	FindByAtasan(ctx context.Context, namaA, hpA, emailA string) ([]*string, error)
 	FindAllReport(ctx context.Context, tahunSidang string) ([]*entity.PKTSReport, error)
-	FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekap, error)
+	FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, error)
 }
 
 func (p *PKTSRepository) FindAll(ctx context.Context, req any) ([]*entity.PKTS, error) {
@@ -146,11 +146,11 @@ func (p *PKTSRepository) FindAllReport(ctx context.Context, tahunSidang string) 
 	return pkts, nil
 }
 
-func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekap, error) {
+func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "PKTSRepository - FindPKTSRekap")
 	defer span.End()
 
-	var pkts []*entity.PKTSRekap
+	var pkts []*entity.PKTSRekapByProdi
 	query := `
 			SELECT r.nim, r.nama, pk.f8, r.email, r.hp, r.tanggal_sidang, p.nama AS prov_kerja, pk.f505 AS penghasilan, pk.created_at AS input_pkts, pk.updated_at AS update_pkts,
 			CASE WHEN pk.nim IS NOT NULL THEN 'Sudah' ELSE 'Belum' END AS pkts_status
