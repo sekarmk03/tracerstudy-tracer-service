@@ -7,7 +7,6 @@ import (
 	"tracerstudy-tracer-service/modules/provinsi/entity"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"gorm.io/gorm"
 )
 
 const (
@@ -22,7 +21,6 @@ type KabKota struct {
 	Provinsi   entity.Provinsi `gorm:"foreignKey:IdIndukWil;references:IdWil" json:"provinsi"`
 	CreatedAt  time.Time       `gorm:"type:timestamptz;not_null" json:"created_at"`
 	UpdatedAt  time.Time       `gorm:"type:timestamptz;not_null" json:"updated_at"`
-	DeletedAt  gorm.DeletedAt  `gorm:"index" json:"deleted_at"`
 }
 
 func NewKabKota(id uint32, idWil, nama, idIndukWil string) *KabKota {

@@ -5,7 +5,6 @@ import (
 	"tracerstudy-tracer-service/pb"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"gorm.io/gorm"
 )
 
 const (
@@ -20,7 +19,6 @@ type Provinsi struct {
 	UmpPkts   uint64         `json:"ump_pkts"`
 	CreatedAt time.Time      `gorm:"type:timestamptz;not_null" json:"created_at"`
 	UpdatedAt time.Time      `gorm:"type:timestamptz;not_null" json:"updated_at"`
-	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
 
 func NewProvinsi(id uint32, idWil, nama string, ump, umpPkts uint64) *Provinsi {

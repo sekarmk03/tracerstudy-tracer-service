@@ -5,7 +5,6 @@ import (
 	"tracerstudy-tracer-service/pb"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"gorm.io/gorm"
 )
 
 const (
@@ -25,7 +24,6 @@ type Prodi struct {
 	AkronimFakultas string         `json:"akronim_fakultas"`
 	CreatedAt       time.Time      `gorm:"type:timestamptz;not_null" json:"created_at"`
 	UpdatedAt       time.Time      `gorm:"type:timestamptz;not_null" json:"updated_at"`
-	DeletedAt       gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
 
 func NewProdi(

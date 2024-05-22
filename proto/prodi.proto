@@ -18,7 +18,6 @@ message Prodi {
     string akronim_fakultas = 9;
     google.protobuf.Timestamp created_at = 10;
     google.protobuf.Timestamp updated_at = 11;
-    google.protobuf.Timestamp deleted_at = 12;
 }
 
 message GetAllProdiResponse {
