@@ -32,6 +32,7 @@ type PKTSRepositoryUseCase interface {
 	FindByAtasan(ctx context.Context, namaA, hpA, emailA string) ([]*string, error)
 	FindAllReport(ctx context.Context, tahunSidang string) ([]*entity.PKTSReport, error)
 	FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, error)
+	FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error)
 }
 
 func (p *PKTSRepository) FindAll(ctx context.Context, req any) ([]*entity.PKTS, error) {
@@ -152,16 +153,16 @@ func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, ta
 
 	var pkts []*entity.PKTSRekapByProdi
 	query := `
-			SELECT r.nim, r.nama, pk.f8, r.email, r.hp, r.tanggal_sidang, p.nama AS prov_kerja, pk.f505 AS penghasilan, pk.created_at AS input_pkts, pk.updated_at AS update_pkts,
-			CASE WHEN pk.nim IS NOT NULL THEN 'Sudah' ELSE 'Belum' END AS pkts_status
-			FROM responden AS r
-			LEFT JOIN pkts AS pk ON pk.nim = r.nim
-			LEFT JOIN ref_provinsi AS p ON pk.f5a1 = p.id_wil
-			WHERE r.kode_prodi = ?
-			AND r.tahun_sidang = ?
+		SELECT r.nim, r.nama, pk.f8, r.email, r.hp, r.tanggal_sidang, p.nama AS prov_kerja, pk.f505 AS penghasilan, pk.created_at AS input_pkts, pk.updated_at AS update_pkts,
+		CASE WHEN pk.nim IS NOT NULL THEN 'Sudah' ELSE 'Belum' END AS pkts_status
+		FROM responden AS r
+		LEFT JOIN pkts AS pk ON pk.nim = r.nim
+		LEFT JOIN ref_provinsi AS p ON pk.f5a1 = p.id_wil
+		WHERE r.kode_prodi = ?
+		AND r.tahun_sidang = ?
 	`
 	if err := p.db.Debug().WithContext(ctxSpan).Raw(query, kodeprodi, tahunSidang).Scan(&pkts).Error; err != nil {
-		log.Println("ERROR: [PKTSRepository - FindPKTSRekap] Internal server error:", err)
+		log.Println("ERROR: [PKTSRepository - FindPKTSRekapByProdi] Internal server error:", err)
 		return nil, status.Errorf(codes.Internal, "%v", err)
 	}
 
@@ -179,6 +180,38 @@ func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, ta
 			status = ""
 		}
 		p.Status = status
+	}
+
+	return pkts, nil
+}
+
+func (p *PKTSRepository) FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error) {
+	ctxSpan, span := trace.StartSpan(ctx, "PKTSRepository - FindPKTSRekap")
+	defer span.End()
+
+	var pkts []*entity.PKTSRekapByYear
+	query := `
+		SELECT
+		r.kode_prodi, p.nama, p.akronim_fakultas, p.jenjang,
+		COUNT(DISTINCT r.nim) AS responden_count,
+		COUNT(DISTINCT pk.nim) AS pkts_count,
+		ROUND((COUNT(DISTINCT pk.nim) / COUNT(DISTINCT r.nim)) * 100) AS pkts_percentage,
+		SUM(CASE WHEN pk.f8 = 4 THEN 1 ELSE 0 END) AS status_lanjutstudi_count,
+		SUM(CASE WHEN pk.f8 IN (1, 3) THEN 1 ELSE 0 END) AS status_hasincome_count,
+		SUM(CASE WHEN pk.f8 IN (1, 3) AND pk.f505 > pv.ump_pkts THEN 1 ELSE 0 END) AS hasincome_ump_count,
+		ROUND((SUM(CASE WHEN pk.f8 IN (1, 3) AND pk.f505 > pv.ump_pkts THEN 1 ELSE 0 END) / COUNT(DISTINCT pk.nim)) * 100) AS hasincome_ump_percentage,
+		SUM(CASE WHEN pk.f8 NOT IN (1, 3, 4) THEN 1 ELSE 0 END) AS status_lainnya_count,
+		ROUND((SUM(CASE WHEN pk.f8 NOT IN (1, 3, 4) THEN 1 ELSE 0 END) / COUNT(DISTINCT pk.nim)) * 100) AS status_lainnya_percentage
+		FROM responden r
+		JOIN ref_prodi p ON r.kode_prodi = p.kode
+		LEFT JOIN pkts pk ON r.nim = pk.nim
+		LEFT JOIN ref_provinsi pv ON pk.f5a1 = pv.id_wil
+		WHERE r.tahun_sidang = ?
+		GROUP BY r.kode_prodi;
+	`
+	if err := p.db.Debug().WithContext(ctxSpan).Raw(query, tahunSidang).Scan(&pkts).Error; err != nil {
+		log.Println("ERROR: [PKTSRepository - FindPKTSRekapByYear] Internal server error:", err)
+		return nil, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	return pkts, nil
