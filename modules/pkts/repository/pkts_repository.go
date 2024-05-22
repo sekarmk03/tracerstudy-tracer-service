@@ -192,16 +192,16 @@ func (p *PKTSRepository) FindPKTSRekapByYear(ctx context.Context, tahunSidang st
 	var pkts []*entity.PKTSRekapByYear
 	query := `
 		SELECT
-		r.kode_prodi, p.nama, p.akronim_fakultas, p.jenjang,
-		COUNT(DISTINCT r.nim) AS responden_count,
+		r.kode_prodi, p.nama AS nama_prodi, p.akronim_fakultas AS fakultas, p.jenjang,
+		COUNT(DISTINCT r.nim) AS alumni_count,
 		COUNT(DISTINCT pk.nim) AS pkts_count,
-		ROUND((COUNT(DISTINCT pk.nim) / COUNT(DISTINCT r.nim)) * 100) AS pkts_percentage,
+		ROUND((COUNT(DISTINCT pk.nim) / COUNT(DISTINCT r.nim)) * 100, 2) AS pkts_percentage,
 		SUM(CASE WHEN pk.f8 = 4 THEN 1 ELSE 0 END) AS status_lanjutstudi_count,
 		SUM(CASE WHEN pk.f8 IN (1, 3) THEN 1 ELSE 0 END) AS status_hasincome_count,
 		SUM(CASE WHEN pk.f8 IN (1, 3) AND pk.f505 > pv.ump_pkts THEN 1 ELSE 0 END) AS hasincome_ump_count,
-		ROUND((SUM(CASE WHEN pk.f8 IN (1, 3) AND pk.f505 > pv.ump_pkts THEN 1 ELSE 0 END) / COUNT(DISTINCT pk.nim)) * 100) AS hasincome_ump_percentage,
+		ROUND((SUM(CASE WHEN pk.f8 IN (1, 3) AND pk.f505 > pv.ump_pkts THEN 1 ELSE 0 END) / COUNT(DISTINCT pk.nim)) * 100, 2) AS hasincome_ump_percentage,
 		SUM(CASE WHEN pk.f8 NOT IN (1, 3, 4) THEN 1 ELSE 0 END) AS status_lainnya_count,
-		ROUND((SUM(CASE WHEN pk.f8 NOT IN (1, 3, 4) THEN 1 ELSE 0 END) / COUNT(DISTINCT pk.nim)) * 100) AS status_lainnya_percentage
+		ROUND((SUM(CASE WHEN pk.f8 NOT IN (1, 3, 4) THEN 1 ELSE 0 END) / COUNT(DISTINCT pk.nim)) * 100, 2) AS status_lainnya_percentage
 		FROM responden r
 		JOIN ref_prodi p ON r.kode_prodi = p.kode
 		LEFT JOIN pkts pk ON r.nim = pk.nim
