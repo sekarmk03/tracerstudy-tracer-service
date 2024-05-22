@@ -288,3 +288,28 @@ func (ph *PKTSHandler) GetPKTSRekapByProdi(ctx context.Context, req *pb.GetPKTSR
 		Data:    pktsRekapArr,
 	}, nil
 }
+
+func (ph *PKTSHandler) GetPKTSRekapByYear(ctx context.Context, req *pb.GetPKTSRekapByYearRequest) (*pb.GetPKTSRekapByYearResponse, error) {
+	pktsRekap, err := ph.PKTSSvc.FindPKTSRekapByYear(ctx, req.GetTahunSidang())
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [PKTSHandler - GetPKTSRekapByYear] Internal server error:", parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetPKTSRekapByYearResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	var pktsRekapArr []*pb.PKTSRekapByYear
+	for _, p := range pktsRekap {
+		pktsRekapProto := entity.ConvertEntityPKTSRekapByYearToProto(p)
+		pktsRekapArr = append(pktsRekapArr, pktsRekapProto)
+	}
+
+	return &pb.GetPKTSRekapByYearResponse{
+		Code:    uint32(http.StatusOK),
+		Message: "get pkts rekap by year success",
+		Data:    pktsRekapArr,
+	}, nil
+}
