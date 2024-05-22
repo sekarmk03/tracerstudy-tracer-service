@@ -265,7 +265,7 @@ func (ph *PKTSHandler) ExportPKTSReport(ctx context.Context, req *pb.ExportPKTSR
 }
 
 func (ph *PKTSHandler) GetPKTSRekapByProdi(ctx context.Context, req *pb.GetPKTSRekapByProdiRequest) (*pb.GetPKTSRekapByProdiResponse, error) {
-	pktsRekap, err := ph.PKTSSvc.FindPKTSRekap(ctx, req.GetKodeprodi())
+	pktsRekap, err := ph.PKTSSvc.FindPKTSRekapByProdi(ctx, req.GetKodeprodi(), req.GetTahunSidang())
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetPKTSRekapByProdi] Internal server error:", parseError.Message)

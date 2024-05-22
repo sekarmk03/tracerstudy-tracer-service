@@ -31,7 +31,7 @@ type PKTSRepositoryUseCase interface {
 	Update(ctx context.Context, pkts *entity.PKTS, updatedFields map[string]interface{}) (*entity.PKTS, error)
 	FindByAtasan(ctx context.Context, namaA, hpA, emailA string) ([]*string, error)
 	FindAllReport(ctx context.Context, tahunSidang string) ([]*entity.PKTSReport, error)
-	FindPKTSRekap(ctx context.Context, kodeprodi string) ([]*entity.PKTSRekap, error)
+	FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekap, error)
 }
 
 func (p *PKTSRepository) FindAll(ctx context.Context, req any) ([]*entity.PKTS, error) {
@@ -146,20 +146,21 @@ func (p *PKTSRepository) FindAllReport(ctx context.Context, tahunSidang string) 
 	return pkts, nil
 }
 
-func (p *PKTSRepository) FindPKTSRekap(ctx context.Context, kodeprodi string) ([]*entity.PKTSRekap, error) {
+func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekap, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "PKTSRepository - FindPKTSRekap")
 	defer span.End()
 
 	var pkts []*entity.PKTSRekap
 	query := `
-		SELECT r.nim, r.nama, pk.f8, r.email, r.hp, r.tanggal_sidang, p.nama AS prov_kerja, pk.f505 AS penghasilan, pk.created_at AS input_pkts, pk.updated_at AS update_pkts
-		FROM pkts AS pk
-		JOIN responden AS r ON pk.nim = r.nim
-		JOIN ref_provinsi AS p ON pk.f5a1 = p.id_wil
-		WHERE pk.kode_prodi = ?
-		LIMIT 10;
+			SELECT r.nim, r.nama, pk.f8, r.email, r.hp, r.tanggal_sidang, p.nama AS prov_kerja, pk.f505 AS penghasilan, pk.created_at AS input_pkts, pk.updated_at AS update_pkts,
+			CASE WHEN pk.nim IS NOT NULL THEN 'Sudah' ELSE 'Belum' END AS pkts_status
+			FROM responden AS r
+			LEFT JOIN pkts AS pk ON pk.nim = r.nim
+			LEFT JOIN ref_provinsi AS p ON pk.f5a1 = p.id_wil
+			WHERE r.kode_prodi = ?
+			AND r.tahun_sidang = ?
 	`
-	if err := p.db.Debug().WithContext(ctxSpan).Raw(query, kodeprodi).Scan(&pkts).Error; err != nil {
+	if err := p.db.Debug().WithContext(ctxSpan).Raw(query, kodeprodi, tahunSidang).Scan(&pkts).Error; err != nil {
 		log.Println("ERROR: [PKTSRepository - FindPKTSRekap] Internal server error:", err)
 		return nil, status.Errorf(codes.Internal, "%v", err)
 	}

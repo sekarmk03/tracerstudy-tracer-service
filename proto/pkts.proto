@@ -108,10 +108,10 @@ message PKTSRekapByProdi {
     string status = 4;
     string email = 5;
     string hp = 6;
-    string tgl_sidang = 7;
+    string tanggal_sidang = 7;
     string pkts_status = 8;
     string prov_kerja = 9;
-    string ump12 = 10;
+    string ump_pkts = 10;
     string penghasilan = 11;
     google.protobuf.Timestamp input_pkts = 12;
     google.protobuf.Timestamp update_pkts = 13;
@@ -171,6 +171,7 @@ message ExportPKTSReportResponse {
 
 message GetPKTSRekapByProdiRequest {
     string kodeprodi = 1;
+    string tahun_sidang = 2;
 }
 
 message GetPKTSRekapByProdiResponse {
