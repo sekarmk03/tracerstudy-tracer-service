@@ -29,6 +29,7 @@ type PKTSServiceUseCase interface {
 	FindByAtasan(ctx context.Context, namaA, hpA, emailA string) ([]*string, error)
 	ExportPKTSReport(ctx context.Context, tahunSidang string) (*bytes.Buffer, error)
 	FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, error)
+	FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error)
 }
 
 func NewPKTSService(cfg config.Config, pktsRepository repository.PKTSRepositoryUseCase) *PKTSService {
@@ -429,7 +430,18 @@ func (svc *PKTSService) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tah
 	res, err := svc.pktsRepository.FindPKTSRekapByProdi(ctx, kodeprodi, tahunSidang)
 	if err != nil {
 		parseError := errors.ParseError(err)
-		log.Println("ERROR: [PKTSService - FindPKTSRekap] Error while find pkts rekap:", parseError.Message)
+		log.Println("ERROR: [PKTSService - FindPKTSRekapByProdi] Error while find pkts rekap by prodi:", parseError.Message)
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (svc *PKTSService) FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error) {
+	res, err := svc.pktsRepository.FindPKTSRekapByYear(ctx, tahunSidang)
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [PKTSService - FindPKTSRekapByYear] Error while find pkts rekap by year:", parseError.Message)
 		return nil, err
 	}
 
