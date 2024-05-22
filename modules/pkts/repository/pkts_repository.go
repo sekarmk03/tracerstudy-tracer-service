@@ -117,7 +117,6 @@ func (p *PKTSRepository) FindByAtasan(ctx context.Context, namaA, hpA, emailA st
 		Select("nim").
 		Where("hp_atasan LIKE ?", "%"+hpA+"%").
 		Or("LOWER(email_atasan) LIKE LOWER(?)", "%"+emailA+"%").
-		Or("LOWER(nama_atasan) LIKE LOWER(?)", "%"+namaA+"%").
 		Pluck("nim", &nims).
 		Error; err != nil {
 		log.Println("ERROR: [PKTSRepository - FindByAtasan] Internal server error:", err)
@@ -153,7 +152,7 @@ func (p *PKTSRepository) FindPKTSRekap(ctx context.Context, kodeprodi string) ([
 
 	var pkts []*entity.PKTSRekap
 	query := `
-		SELECT r.nim, r.nama, pk.f8, r.email, r.hp, r.tanggal_sidang, p.nama AS prov_kerja, pk.f5_05 AS penghasilan, pk.created_at AS input_pkts, pk.updated_at AS update_pkts
+		SELECT r.nim, r.nama, pk.f8, r.email, r.hp, r.tanggal_sidang, p.nama AS prov_kerja, pk.f505 AS penghasilan, pk.created_at AS input_pkts, pk.updated_at AS update_pkts
 		FROM pkts AS pk
 		JOIN responden AS r ON pk.nim = r.nim
 		JOIN ref_provinsi AS p ON pk.f5a1 = p.id_wil

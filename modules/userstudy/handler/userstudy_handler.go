@@ -67,7 +67,12 @@ func (uh *UserStudyHandler) GetAllUserStudy(ctx context.Context, req *emptypb.Em
 }
 
 func (uh *UserStudyHandler) GetUserStudyByNim(ctx context.Context, req *pb.GetUserStudyByNimRequest) (*pb.SingleUserStudyResponse, error) {
-	userStudy, err := uh.userStudySvc.FindByNim(ctx, req.GetNim(), req.GetEmailResponden(), req.GetHpResponden())
+	userStudy, err := uh.userStudySvc.FindByNim(
+		ctx,
+		req.GetNim(),
+		req.GetEmailResponden(),
+		utils.FormatPhoneNumber(req.GetHpResponden()),
+	)
 	if err != nil {
 		if userStudy == nil {
 			log.Println("WARNING: [UserStudyHandler - GetUserStudyByNim] Resource user study not found for nim:", req.GetNim())

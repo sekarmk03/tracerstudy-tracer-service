@@ -215,7 +215,12 @@ func (ph *PKTSHandler) UpdatePKTS(ctx context.Context, req *pb.PKTS) (*pb.GetPKT
 }
 
 func (ph *PKTSHandler) GetNimByDataAtasan(ctx context.Context, req *pb.GetNimByDataAtasanRequest) (*pb.GetNimByDataAtasanResponse, error) {
-	nims, err := ph.PKTSSvc.FindByAtasan(ctx, req.NamaAtasan, req.HpAtasan, req.EmailAtasan)
+	nims, err := ph.PKTSSvc.FindByAtasan(
+		ctx,
+		req.GetNamaAtasan(),
+		utils.FormatPhoneNumber(req.GetHpAtasan()),
+		req.GetEmailAtasan(),
+	)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetNimByDataAtasan] Internal server error:", parseError.Message)
