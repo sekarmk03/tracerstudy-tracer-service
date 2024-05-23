@@ -14,14 +14,14 @@ type AccessibleRoles map[string]map[string][]uint32
 */
 
 const (
-	BasePath      = "tracer_study_grpc"
-	KabKotaSvc    = "KabKotaService"
+	BasePath         = "tracer_study_grpc"
+	KabKotaSvc       = "KabKotaService"
 	MhsBiodataApiSvc = "MhsBiodataApiService"
-	PktsSvc       = "PKTSService"
-	ProvinsiSvc   = "ProvinsiService"
-	RespondenSvc  = "RespondenService"
-	UserStudySvc  = "UserStudyService"
-	ProdiSvc      = "ProdiService"
+	PktsSvc          = "PKTSService"
+	ProvinsiSvc      = "ProvinsiService"
+	RespondenSvc     = "RespondenService"
+	UserStudySvc     = "UserStudyService"
+	ProdiSvc         = "ProdiService"
 )
 
 var roles = AccessibleRoles{
@@ -68,11 +68,14 @@ var roles = AccessibleRoles{
 		"GetRespondenByNimList":   {1, 2, 3, 4, 5, 6, 7},
 	},
 	"/" + BasePath + "." + UserStudySvc + "/": {
-		"GetAllUserStudy":   {1, 2, 3, 4, 5, 6, 7},
-		"GetUserStudyByNim": {1, 2, 3, 4, 5, 6, 7},
-		"CreateUserStudy":   {1, 2, 7},
-		"UpdateUserStudy":   {1, 2, 7},
-		"ExportUSReport":    {1, 2, 3, 4, 5},
+		"GetAllUserStudy":          {1, 2, 3, 4, 5, 6, 7},
+		"GetUserStudyByNim":        {1, 2, 3, 4, 5, 6, 7},
+		"CreateUserStudy":          {1, 2, 7},
+		"UpdateUserStudy":          {1, 2, 7},
+		"ExportUSReport":           {1, 2, 3, 4, 5},
+		"GetAlumniListByAtasan":    {1, 2, 3, 4, 5, 7},
+		"GetUserStudyRekap":        {1, 2, 3, 4, 5},
+		"GetUserStudyRekapByProdi": {1, 2, 3, 4, 5},
 	},
 }
 
