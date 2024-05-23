@@ -19,7 +19,7 @@ message UserStudy {
     string nama_lulusan = 9;
     string prodi_lulusan = 10;
     string tahun_lulusan = 11;
-    string lama_mengenal_lulusan = 12;
+    uint32 lama_mengenal_lulusan = 12;
     string etika = 13;
     string keahlian_bid_ilmu = 14;
     string bahasa_inggris = 15;

@@ -25,7 +25,7 @@ type UserStudy struct {
 	NamaLulusan                       string         `json:"nama_lulusan"`
 	ProdiLulusan                      string         `json:"prodi_lulusan"`
 	TahunLulusan                      string         `json:"tahun_lulusan"`
-	LamaMengenalLulusan               string         `json:"lama_mengenal_lulusan"`
+	LamaMengenalLulusan               uint32         `json:"lama_mengenal_lulusan"`
 	Etika                             string         `json:"etika"`
 	KeahlianBidIlmu                   string         `json:"keahlian_bid_ilmu"`
 	BahasaInggris                     string         `json:"bahasa_inggris"`
@@ -43,7 +43,7 @@ type UserStudy struct {
 	DeletedAt                         gorm.DeletedAt `gorm:"index" json:"deleted_at"`
 }
 
-func NewUserStudy(id uint64, namaResponden, emailResponden, hpResponden, namaInstansi, jabatan, alamatInstansi, nimLulusan, namaLulusan, prodiLulusan, tahunLulusan, lamaMengenalLulusan, etika, keahlianBidIlmu, bahasaInggris, penggunaanTi, komunikasi, kerjasamaTim, pengembanganDiri, kesiapanTerjunMasy, keunggulanLulusan, kelemahanLulusan, saranPeningkatanKompetensiLulusan, saranPerbaikanKurikulum, createdBy, updatedBy string) *UserStudy {
+func NewUserStudy(id uint64, namaResponden, emailResponden, hpResponden, namaInstansi, jabatan, alamatInstansi, nimLulusan, namaLulusan, prodiLulusan, tahunLulusan string, lamaMengenalLulusan uint32, etika, keahlianBidIlmu, bahasaInggris, penggunaanTi, komunikasi, kerjasamaTim, pengembanganDiri, kesiapanTerjunMasy, keunggulanLulusan, kelemahanLulusan, saranPeningkatanKompetensiLulusan, saranPerbaikanKurikulum, createdBy, updatedBy string) *UserStudy {
 	return &UserStudy{
 		Id:                                id,
 		NamaResponden:                     namaResponden,

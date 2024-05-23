@@ -197,7 +197,12 @@ func (uh *UserStudyHandler) ExportUSReport(ctx context.Context, req *emptypb.Emp
 }
 
 func (uh *UserStudyHandler) GetAlumniListByAtasan(ctx context.Context, req *pb.GetAlumniByAtasanRequest) (*pb.GetAlumniByAtasanResponse, error) {
-	nimList, err := uh.pktsSvc.FindByAtasan(ctx, req.GetNamaAtasan(), req.GetHpAtasan(), req.GetEmailAtasan())
+	nimList, err := uh.pktsSvc.FindByAtasan(
+		ctx,
+		req.GetNamaAtasan(),
+		utils.FormatPhoneNumber(req.GetHpAtasan()),
+		req.GetEmailAtasan(),
+	)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - GetAlumniListByAtasan] Error while get alumni list by atasan:", parseError.Message)
@@ -237,5 +242,30 @@ func (uh *UserStudyHandler) GetAlumniListByAtasan(ctx context.Context, req *pb.G
 		Code:    uint32(http.StatusOK),
 		Message: "get alumni list by atasan success",
 		Data:    respondenProto,
+	}, nil
+}
+
+func (uh *UserStudyHandler) GetUserStudyRekap(ctx context.Context, req *emptypb.Empty) (*pb.GetUserStudyRekapResponse, error) {
+	rekap, err := uh.userStudySvc.FindUserStudyRekap(ctx, req)
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [UserStudyHandler - GetUserStudyRekap] Error while get user study rekap:", parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetUserStudyRekapResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	var rekapArr []*pb.UserStudyRekap
+	for _, r := range rekap {
+		rekapProto := entity.ConvertUserStudyRekapEntityToProto(r)
+		rekapArr = append(rekapArr, rekapProto)
+	}
+
+	return &pb.GetUserStudyRekapResponse{
+		Code:    uint32(http.StatusOK),
+		Message: "get user study rekap success",
+		Data:    rekapArr,
 	}, nil
 }

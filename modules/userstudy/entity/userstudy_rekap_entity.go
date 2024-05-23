@@ -13,7 +13,7 @@ type UserStudyRekap struct {
 	UserStudyPercentage float64 `json:"user_study_percentage"`
 }
 
-func ConvertUserStudyRekapToProto(usr *UserStudyRekap) *pb.UserStudyRekap {
+func ConvertUserStudyRekapEntityToProto(usr *UserStudyRekap) *pb.UserStudyRekap {
 	return &pb.UserStudyRekap{
 		Fakultas:            usr.Fakultas,
 		KodeProdi:           usr.KodeProdi,
