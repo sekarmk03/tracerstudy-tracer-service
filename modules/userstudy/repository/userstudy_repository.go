@@ -29,6 +29,7 @@ type UserStudyRepositoryUseCase interface {
 	Update(ctx context.Context, userStudy *entity.UserStudy, updatedFields map[string]interface{}) (*entity.UserStudy, error)
 	Create(ctx context.Context, req *entity.UserStudy) (*entity.UserStudy, error)
 	FindUserStudyRekap(ctx context.Context, req any) ([]*entity.UserStudyRekap, error)
+	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
 }
 
 func (r *UserStudyRepository) FindAll(ctx context.Context, req any) ([]*entity.UserStudy, error) {
@@ -115,4 +116,105 @@ func (r *UserStudyRepository) FindUserStudyRekap(ctx context.Context, req any) (
 	}
 
 	return userStudyRekap, nil
+}
+
+func (r *UserStudyRepository) FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error) {
+	ctxSpan, span := trace.StartSpan(ctx, "UserStudyRepository - FindUserStudyRekapByProdi")
+	defer span.End()
+
+	var userStudyRekapByProdi []*entity.UserStudyRekapByProdi
+	query := `
+		SELECT 
+		r.nim,
+		r.nama AS nama,
+		r.tahun_sidang AS tahun_lulus,
+		pk.nama_atasan AS pkts_nama_atasan,
+		pk.email_atasan AS pkts_email_atasan,
+		pk.f5b AS pkts_instansi,
+		CASE 
+			WHEN us.nim_lulusan IS NULL THEN 'Belum' 
+			ELSE 'Sudah'
+		END AS userstudy_status,
+		us.nama_responden AS userstudy_nama,
+		us.email_responden AS userstudy_email,
+		us.nama_instansi AS userstudy_instansi,
+		us.jabatan AS userstudy_jabatan,
+		us.lama_mengenal_lulusan AS lama_mengenal_lulusan,
+		CASE
+			WHEN avg_grades.avg_grade IS NULL THEN NULL
+			WHEN avg_grades.avg_grade >= 3.5 THEN 'sangat baik'
+			WHEN avg_grades.avg_grade >= 2.5 THEN 'baik'
+			WHEN avg_grades.avg_grade >= 1.5 THEN 'cukup'
+			ELSE 'kurang'
+		END AS average_grade
+		FROM 
+			responden r
+		LEFT JOIN
+			pkts pk ON r.nim = pk.nim
+		LEFT JOIN 
+			user_study us ON r.nim = us.nim_lulusan
+		LEFT JOIN (
+			SELECT 
+				nim_lulusan,
+				(CASE etika
+					WHEN 'kurang' THEN 1
+					WHEN 'cukup' THEN 2
+					WHEN 'baik' THEN 3
+					WHEN 'sangat baik' THEN 4
+				END +
+				CASE keahlian_bid_ilmu
+					WHEN 'kurang' THEN 1
+					WHEN 'cukup' THEN 2
+					WHEN 'baik' THEN 3
+					WHEN 'sangat baik' THEN 4
+				END +
+				CASE bahasa_inggris
+					WHEN 'kurang' THEN 1
+					WHEN 'cukup' THEN 2
+					WHEN 'baik' THEN 3
+					WHEN 'sangat baik' THEN 4
+				END +
+				CASE penggunaan_ti
+					WHEN 'kurang' THEN 1
+					WHEN 'cukup' THEN 2
+					WHEN 'baik' THEN 3
+					WHEN 'sangat baik' THEN 4
+				END +
+				CASE komunikasi
+					WHEN 'kurang' THEN 1
+					WHEN 'cukup' THEN 2
+					WHEN 'baik' THEN 3
+					WHEN 'sangat baik' THEN 4
+				END +
+				CASE kerjasama_tim
+					WHEN 'kurang' THEN 1
+					WHEN 'cukup' THEN 2
+					WHEN 'baik' THEN 3
+					WHEN 'sangat baik' THEN 4
+				END +
+				CASE pengembangan_diri
+					WHEN 'kurang' THEN 1
+					WHEN 'cukup' THEN 2
+					WHEN 'baik' THEN 3
+					WHEN 'sangat baik' THEN 4
+				END +
+				CASE kesiapan_terjun_masy
+					WHEN 'kurang' THEN 1
+					WHEN 'cukup' THEN 2
+					WHEN 'baik' THEN 3
+					WHEN 'sangat baik' THEN 4
+				END) / 8.0 AS avg_grade
+			FROM 
+				user_study
+		) avg_grades ON r.nim = avg_grades.nim_lulusan
+		WHERE pk.f8 IN (1, 3)
+		AND r.kode_prodi = ?
+		ORDER BY userstudy_status DESC;
+	`
+	if err := r.db.Debug().WithContext(ctxSpan).Raw(query, kodeProdi).Scan(&userStudyRekapByProdi).Error; err != nil {
+		log.Println("ERROR: [UserStudyRepository - FindUserStudyRekapByProdi] Internal server error:", err)
+		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
+	}
+
+	return userStudyRekapByProdi, nil
 }
