@@ -101,7 +101,9 @@ message UserStudyRekapByProdi {
     string userstudy_nama = 8;
     string userstudy_email = 9;
     string userstudy_instansi = 10;
-    string average_grade = 11;
+    string userstudy_jabatan = 11;
+    string lama_mengenal_lulusan = 12;
+    string average_grade = 13;
 }
 
 message GetUserStudyRekapByProdiRequest {
