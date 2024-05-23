@@ -269,3 +269,28 @@ func (uh *UserStudyHandler) GetUserStudyRekap(ctx context.Context, req *emptypb.
 		Data:    rekapArr,
 	}, nil
 }
+
+func (uh *UserStudyHandler) GetUserStudyRekapByProdi(ctx context.Context, req *pb.GetUserStudyRekapByProdiRequest) (*pb.GetUserStudyRekapByProdiResponse, error) {
+	rekap, err := uh.userStudySvc.FindUserStudyRekapByProdi(ctx, req.GetKodeProdi())
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [UserStudyHandler - GetUserStudyRekapByProdi] Error while get user study rekap by prodi:", parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetUserStudyRekapByProdiResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	var rekapArr []*pb.UserStudyRekapByProdi
+	for _, r := range rekap {
+		rekapProto := entity.ConvertUserStudyRekapByProdiEntityToProto(r)
+		rekapArr = append(rekapArr, rekapProto)
+	}
+
+	return &pb.GetUserStudyRekapByProdiResponse{
+		Code:    uint32(http.StatusOK),
+		Message: "get user study rekap by prodi success",
+		Data:    rekapArr,
+	}, nil
+}
