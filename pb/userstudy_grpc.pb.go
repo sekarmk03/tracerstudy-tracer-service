@@ -20,13 +20,14 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	UserStudyService_GetAllUserStudy_FullMethodName       = "/tracer_study_grpc.UserStudyService/GetAllUserStudy"
-	UserStudyService_GetUserStudyByNim_FullMethodName     = "/tracer_study_grpc.UserStudyService/GetUserStudyByNim"
-	UserStudyService_CreateUserStudy_FullMethodName       = "/tracer_study_grpc.UserStudyService/CreateUserStudy"
-	UserStudyService_UpdateUserStudy_FullMethodName       = "/tracer_study_grpc.UserStudyService/UpdateUserStudy"
-	UserStudyService_ExportUSReport_FullMethodName        = "/tracer_study_grpc.UserStudyService/ExportUSReport"
-	UserStudyService_GetAlumniListByAtasan_FullMethodName = "/tracer_study_grpc.UserStudyService/GetAlumniListByAtasan"
-	UserStudyService_GetUserStudyRekap_FullMethodName     = "/tracer_study_grpc.UserStudyService/GetUserStudyRekap"
+	UserStudyService_GetAllUserStudy_FullMethodName          = "/tracer_study_grpc.UserStudyService/GetAllUserStudy"
+	UserStudyService_GetUserStudyByNim_FullMethodName        = "/tracer_study_grpc.UserStudyService/GetUserStudyByNim"
+	UserStudyService_CreateUserStudy_FullMethodName          = "/tracer_study_grpc.UserStudyService/CreateUserStudy"
+	UserStudyService_UpdateUserStudy_FullMethodName          = "/tracer_study_grpc.UserStudyService/UpdateUserStudy"
+	UserStudyService_ExportUSReport_FullMethodName           = "/tracer_study_grpc.UserStudyService/ExportUSReport"
+	UserStudyService_GetAlumniListByAtasan_FullMethodName    = "/tracer_study_grpc.UserStudyService/GetAlumniListByAtasan"
+	UserStudyService_GetUserStudyRekap_FullMethodName        = "/tracer_study_grpc.UserStudyService/GetUserStudyRekap"
+	UserStudyService_GetUserStudyRekapByProdi_FullMethodName = "/tracer_study_grpc.UserStudyService/GetUserStudyRekapByProdi"
 )
 
 // UserStudyServiceClient is the client API for UserStudyService service.
@@ -40,6 +41,7 @@ type UserStudyServiceClient interface {
 	ExportUSReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ExportUSReportResponse, error)
 	GetAlumniListByAtasan(ctx context.Context, in *GetAlumniByAtasanRequest, opts ...grpc.CallOption) (*GetAlumniByAtasanResponse, error)
 	GetUserStudyRekap(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetUserStudyRekapResponse, error)
+	GetUserStudyRekapByProdi(ctx context.Context, in *GetUserStudyRekapByProdiRequest, opts ...grpc.CallOption) (*GetUserStudyRekapByProdiResponse, error)
 }
 
 type userStudyServiceClient struct {
@@ -113,6 +115,15 @@ func (c *userStudyServiceClient) GetUserStudyRekap(ctx context.Context, in *empt
 	return out, nil
 }
 
+func (c *userStudyServiceClient) GetUserStudyRekapByProdi(ctx context.Context, in *GetUserStudyRekapByProdiRequest, opts ...grpc.CallOption) (*GetUserStudyRekapByProdiResponse, error) {
+	out := new(GetUserStudyRekapByProdiResponse)
+	err := c.cc.Invoke(ctx, UserStudyService_GetUserStudyRekapByProdi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserStudyServiceServer is the server API for UserStudyService service.
 // All implementations must embed UnimplementedUserStudyServiceServer
 // for forward compatibility
@@ -124,6 +135,7 @@ type UserStudyServiceServer interface {
 	ExportUSReport(context.Context, *emptypb.Empty) (*ExportUSReportResponse, error)
 	GetAlumniListByAtasan(context.Context, *GetAlumniByAtasanRequest) (*GetAlumniByAtasanResponse, error)
 	GetUserStudyRekap(context.Context, *emptypb.Empty) (*GetUserStudyRekapResponse, error)
+	GetUserStudyRekapByProdi(context.Context, *GetUserStudyRekapByProdiRequest) (*GetUserStudyRekapByProdiResponse, error)
 	mustEmbedUnimplementedUserStudyServiceServer()
 }
 
@@ -151,6 +163,9 @@ func (UnimplementedUserStudyServiceServer) GetAlumniListByAtasan(context.Context
 }
 func (UnimplementedUserStudyServiceServer) GetUserStudyRekap(context.Context, *emptypb.Empty) (*GetUserStudyRekapResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserStudyRekap not implemented")
+}
+func (UnimplementedUserStudyServiceServer) GetUserStudyRekapByProdi(context.Context, *GetUserStudyRekapByProdiRequest) (*GetUserStudyRekapByProdiResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserStudyRekapByProdi not implemented")
 }
 func (UnimplementedUserStudyServiceServer) mustEmbedUnimplementedUserStudyServiceServer() {}
 
@@ -291,6 +306,24 @@ func _UserStudyService_GetUserStudyRekap_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserStudyService_GetUserStudyRekapByProdi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserStudyRekapByProdiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserStudyServiceServer).GetUserStudyRekapByProdi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserStudyService_GetUserStudyRekapByProdi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserStudyServiceServer).GetUserStudyRekapByProdi(ctx, req.(*GetUserStudyRekapByProdiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserStudyService_ServiceDesc is the grpc.ServiceDesc for UserStudyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -325,6 +358,10 @@ var UserStudyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserStudyRekap",
 			Handler:    _UserStudyService_GetUserStudyRekap_Handler,
+		},
+		{
+			MethodName: "GetUserStudyRekapByProdi",
+			Handler:    _UserStudyService_GetUserStudyRekapByProdi_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
