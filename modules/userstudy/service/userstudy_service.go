@@ -28,6 +28,7 @@ type UserStudyServiceUseCase interface {
 	Create(ctx context.Context, namaResponden, emailResponden, hpResponden, namaInstansi, jabatan, alamatInstansi, nimLulusan, namaLulusan, prodiLulusan, tahunLulusan string) (*entity.UserStudy, error)
 	ExportUSReport(ctx context.Context, req any) (*bytes.Buffer, error)
 	FindUserStudyRekap(ctx context.Context, req any) ([]*entity.UserStudyRekap, error)
+	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
 }
 
 func NewUserStudyService(cfg config.Config, userStudyRepository repository.UserStudyRepositoryUseCase) *UserStudyService {
@@ -214,6 +215,17 @@ func (svc *UserStudyService) FindUserStudyRekap(ctx context.Context, req any) ([
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyService - FindUserStudyRekap] Error while find user study rekap:", parseError.Message)
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (svc *UserStudyService) FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error) {
+	res, err := svc.userStudyRepository.FindUserStudyRekapByProdi(ctx, kodeProdi)
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [UserStudyService - FindUserStudyRekapByProdi] Error while find user study rekap by prodi:", parseError.Message)
 		return nil, err
 	}
 
