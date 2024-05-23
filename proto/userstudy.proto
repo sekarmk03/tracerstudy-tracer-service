@@ -73,6 +73,23 @@ message GetAlumniByAtasanResponse {
     repeated Responden data = 3;
 }
 
+message UserStudyRekap {
+    string fakultas = 1;
+    string kode_prodi = 2;
+    string nama_prodi = 3;
+    string jenjang = 4;
+    uint32 alumni_count = 5;
+    uint32 pkts_count = 6;
+    uint32 user_study_count = 7;
+    double user_study_percentage = 8;
+}
+
+message GetUserStudyRekapResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated UserStudyRekap data = 3;
+}
+
 service UserStudyService {
     rpc GetAllUserStudy(google.protobuf.Empty) returns (MultipleUserStudyResponse) {};
     rpc GetUserStudyByNim(GetUserStudyByNimRequest) returns (SingleUserStudyResponse) {};
@@ -80,4 +97,5 @@ service UserStudyService {
     rpc UpdateUserStudy(UserStudy) returns (SingleUserStudyResponse) {};
     rpc ExportUSReport(google.protobuf.Empty) returns (ExportUSReportResponse) {};
     rpc GetAlumniListByAtasan(GetAlumniByAtasanRequest) returns (GetAlumniByAtasanResponse) {};
+    rpc GetUserStudyRekap(google.protobuf.Empty) returns (GetUserStudyRekapResponse) {};
 }

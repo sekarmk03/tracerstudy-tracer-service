@@ -26,6 +26,7 @@ const (
 	UserStudyService_UpdateUserStudy_FullMethodName       = "/tracer_study_grpc.UserStudyService/UpdateUserStudy"
 	UserStudyService_ExportUSReport_FullMethodName        = "/tracer_study_grpc.UserStudyService/ExportUSReport"
 	UserStudyService_GetAlumniListByAtasan_FullMethodName = "/tracer_study_grpc.UserStudyService/GetAlumniListByAtasan"
+	UserStudyService_GetUserStudyRekap_FullMethodName     = "/tracer_study_grpc.UserStudyService/GetUserStudyRekap"
 )
 
 // UserStudyServiceClient is the client API for UserStudyService service.
@@ -38,6 +39,7 @@ type UserStudyServiceClient interface {
 	UpdateUserStudy(ctx context.Context, in *UserStudy, opts ...grpc.CallOption) (*SingleUserStudyResponse, error)
 	ExportUSReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ExportUSReportResponse, error)
 	GetAlumniListByAtasan(ctx context.Context, in *GetAlumniByAtasanRequest, opts ...grpc.CallOption) (*GetAlumniByAtasanResponse, error)
+	GetUserStudyRekap(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetUserStudyRekapResponse, error)
 }
 
 type userStudyServiceClient struct {
@@ -102,6 +104,15 @@ func (c *userStudyServiceClient) GetAlumniListByAtasan(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *userStudyServiceClient) GetUserStudyRekap(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetUserStudyRekapResponse, error) {
+	out := new(GetUserStudyRekapResponse)
+	err := c.cc.Invoke(ctx, UserStudyService_GetUserStudyRekap_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserStudyServiceServer is the server API for UserStudyService service.
 // All implementations must embed UnimplementedUserStudyServiceServer
 // for forward compatibility
@@ -112,6 +123,7 @@ type UserStudyServiceServer interface {
 	UpdateUserStudy(context.Context, *UserStudy) (*SingleUserStudyResponse, error)
 	ExportUSReport(context.Context, *emptypb.Empty) (*ExportUSReportResponse, error)
 	GetAlumniListByAtasan(context.Context, *GetAlumniByAtasanRequest) (*GetAlumniByAtasanResponse, error)
+	GetUserStudyRekap(context.Context, *emptypb.Empty) (*GetUserStudyRekapResponse, error)
 	mustEmbedUnimplementedUserStudyServiceServer()
 }
 
@@ -136,6 +148,9 @@ func (UnimplementedUserStudyServiceServer) ExportUSReport(context.Context, *empt
 }
 func (UnimplementedUserStudyServiceServer) GetAlumniListByAtasan(context.Context, *GetAlumniByAtasanRequest) (*GetAlumniByAtasanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAlumniListByAtasan not implemented")
+}
+func (UnimplementedUserStudyServiceServer) GetUserStudyRekap(context.Context, *emptypb.Empty) (*GetUserStudyRekapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserStudyRekap not implemented")
 }
 func (UnimplementedUserStudyServiceServer) mustEmbedUnimplementedUserStudyServiceServer() {}
 
@@ -258,6 +273,24 @@ func _UserStudyService_GetAlumniListByAtasan_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserStudyService_GetUserStudyRekap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserStudyServiceServer).GetUserStudyRekap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserStudyService_GetUserStudyRekap_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserStudyServiceServer).GetUserStudyRekap(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserStudyService_ServiceDesc is the grpc.ServiceDesc for UserStudyService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -288,6 +321,10 @@ var UserStudyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAlumniListByAtasan",
 			Handler:    _UserStudyService_GetAlumniListByAtasan_Handler,
+		},
+		{
+			MethodName: "GetUserStudyRekap",
+			Handler:    _UserStudyService_GetUserStudyRekap_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
