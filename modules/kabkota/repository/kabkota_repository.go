@@ -25,34 +25,44 @@ func NewKabKotaRepository(db *gorm.DB) *KabKotaRepository {
 }
 
 type KabKotaRepositoryUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*kkentity.KabKota, error)
+	FindAll(ctx context.Context, limit, offset int) ([]*kkentity.KabKota, int64, error)
 	FindByIdWil(ctx context.Context, idWil string) (*kkentity.KabKota, error)
 	Create(ctx context.Context, req *kkentity.KabKota) (*kkentity.KabKota, error)
 	Update(ctx context.Context, kabkota *kkentity.KabKota, updatedFields map[string]interface{}) (*kkentity.KabKota, error)
 	Delete(ctx context.Context, idWil string) error
 }
 
-func (k *KabKotaRepository) FindAll(ctx context.Context, req any) ([]*kkentity.KabKota, error) {
+func (k *KabKotaRepository) FindAll(ctx context.Context, limit, offset int) ([]*kkentity.KabKota, int64, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "KabKotaRepository - FindAll")
 	defer span.End()
 
 	var kabkota []*kkentity.KabKota
-	if err := k.db.Debug().WithContext(ctxSpan).Find(&kabkota).Error; err != nil {
+	var totalRecords int64
+
+	if err := k.db.Debug().WithContext(ctxSpan).
+		Limit(limit).
+		Offset(offset).
+		Find(&kabkota).Error; err != nil {
 		log.Println("ERROR: [KabKotaRepository - FindAll] Internal error:", err)
-		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
+	}
+
+	if err := k.db.Debug().WithContext(ctxSpan).Model(&kkentity.KabKota{}).Count(&totalRecords).Error; err != nil {
+		log.Println("ERROR: [KabKotaRepository - FindAll] Internal server error:", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}
 
 	for _, kk := range kabkota {
 		var provinsi pentity.Provinsi
 		if err := k.db.Debug().WithContext(ctxSpan).Where("id_wil = ?", kk.IdIndukWil).First(&provinsi).Error; err != nil {
 			log.Println("ERROR: [KabKotaRepository - FindAll] Failed to fetch Provinsi data:", err)
-			return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
+			return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
 		}
 
 		kk.Provinsi = provinsi
 	}
 
-	return kabkota, nil
+	return kabkota, totalRecords, nil
 }
 
 func (k *KabKotaRepository) FindByIdWil(ctx context.Context, idWil string) (*kkentity.KabKota, error) {

@@ -17,7 +17,7 @@ type KabKotaService struct {
 }
 
 type KabKotaServiceUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.KabKota, error)
+	FindAll(ctx context.Context, page, limit uint32) ([]*entity.KabKota, int64, error)
 	FindByIdWil(ctx context.Context, idWil string) (*entity.KabKota, error)
 	Create(ctx context.Context, idWil, nama, idIndukWil string) (*entity.KabKota, error)
 	Update(ctx context.Context, idWil string, fields *entity.KabKota) (*entity.KabKota, error)
@@ -31,14 +31,16 @@ func NewKabKotaService(cfg config.Config, kabkotaRepository repository.KabKotaRe
 	}
 }
 
-func (svc *KabKotaService) FindAll(ctx context.Context, req any) ([]*entity.KabKota, error) {
-	res, err := svc.kabkotaRepository.FindAll(ctx, req)
+func (svc *KabKotaService) FindAll(ctx context.Context, page, limit uint32) ([]*entity.KabKota, int64, error) {
+	offset := (page - 1) * limit
+
+	res, rows, err := svc.kabkotaRepository.FindAll(ctx, int(limit), int(offset))
 	if err != nil {
 		log.Println("ERROR: [KabKotaService - FindAll] Error while find all kabkota:", err)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return res, nil
+	return res, rows, nil
 }
 
 func (svc *KabKotaService) FindByIdWil(ctx context.Context, idWil string) (*entity.KabKota, error) {

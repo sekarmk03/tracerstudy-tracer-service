@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"log"
+	"math"
 	"net/http"
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
@@ -12,7 +13,6 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type KabKotaHandler struct {
@@ -28,8 +28,15 @@ func NewKabKotaHandler(config config.Config, kabkotaService service.KabKotaServi
 	}
 }
 
-func (kh *KabKotaHandler) GetAllKabKota(ctx context.Context, req *emptypb.Empty) (*pb.GetAllKabKotaResponse, error) {
-	kabkota, err := kh.kabkotaSvc.FindAll(ctx, req)
+func (kh *KabKotaHandler) GetAllKabKota(ctx context.Context, req *pb.GetAllKabKotaRequest) (*pb.GetAllKabKotaResponse, error) {
+	if req == nil || req.Pagination == nil {
+        return &pb.GetAllKabKotaResponse{
+			Code:    uint32(http.StatusBadRequest),
+			Message: "request cannot be nil",
+		}, status.Errorf(codes.InvalidArgument, "request cannot be nil")
+    }
+
+	kabkota, totalRows, err := kh.kabkotaSvc.FindAll(ctx, req.Pagination.Page, req.Pagination.Limit)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [KabKotaHandler - GetAllKabKota] Error:", parseError.Message)
@@ -46,10 +53,20 @@ func (kh *KabKotaHandler) GetAllKabKota(ctx context.Context, req *emptypb.Empty)
 		kabkotaArr = append(kabkotaArr, kabkotaProto)
 	}
 
+	totalPages := uint32(math.Ceil(float64(totalRows) / float64(req.Pagination.Limit)))
+
+	pagination := &pb.Pagination{
+		TotalRows:   uint32(totalRows),
+		TotalPages:  totalPages,
+		CurrentPage: req.Pagination.Page,
+		CurrentRows: uint32(len(kabkotaArr)),
+	}
+
 	return &pb.GetAllKabKotaResponse{
-		Code:    uint32(http.StatusOK),
-		Message: "get all kabkota success",
-		Data:    kabkotaArr,
+		Code:       uint32(http.StatusOK),
+		Message:    "get all kabkota success",
+		Pagination: pagination,
+		Data:       kabkotaArr,
 	}, nil
 }
 
