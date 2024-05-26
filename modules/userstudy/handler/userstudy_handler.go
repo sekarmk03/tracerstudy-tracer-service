@@ -256,8 +256,8 @@ func (uh *UserStudyHandler) GetAlumniListByAtasan(ctx context.Context, req *pb.G
 	}, nil
 }
 
-func (uh *UserStudyHandler) GetUserStudyRekap(ctx context.Context, req *emptypb.Empty) (*pb.GetUserStudyRekapResponse, error) {
-	rekap, err := uh.userStudySvc.FindUserStudyRekap(ctx)
+func (uh *UserStudyHandler) GetUserStudyRekap(ctx context.Context, req *pb.GetUserStudyRekapRequest) (*pb.GetUserStudyRekapResponse, error) {
+	rekap, totalRecords, err := uh.userStudySvc.FindUserStudyRekap(ctx, req.Pagination.Limit, req.Pagination.Page)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - GetUserStudyRekap] Error while get user study rekap:", parseError.Message)
@@ -274,10 +274,20 @@ func (uh *UserStudyHandler) GetUserStudyRekap(ctx context.Context, req *emptypb.
 		rekapArr = append(rekapArr, rekapProto)
 	}
 
+	totalPages := uint32(math.Ceil(float64(totalRecords) / float64(req.Pagination.Limit)))
+
+	pagination := &pb.Pagination{
+		TotalRows:   uint32(totalRecords),
+		TotalPages:  totalPages,
+		CurrentPage: req.Pagination.Page,
+		CurrentRows: uint32(len(rekapArr)),
+	}
+
 	return &pb.GetUserStudyRekapResponse{
-		Code:    uint32(http.StatusOK),
-		Message: "get user study rekap success",
-		Data:    rekapArr,
+		Code:       uint32(http.StatusOK),
+		Message:    "get user study rekap success",
+		Pagination: pagination,
+		Data:       rekapArr,
 	}, nil
 }
 

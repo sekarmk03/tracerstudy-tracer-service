@@ -28,7 +28,7 @@ type UserStudyRepositoryUseCase interface {
 	FindByNim(ctx context.Context, nim, emailResponden, hpResponden string) (*entity.UserStudy, error)
 	Update(ctx context.Context, userStudy *entity.UserStudy, updatedFields map[string]interface{}) (*entity.UserStudy, error)
 	Create(ctx context.Context, req *entity.UserStudy) (*entity.UserStudy, error)
-	FindUserStudyRekap(ctx context.Context) ([]*entity.UserStudyRekap, error)
+	FindUserStudyRekap(ctx context.Context, limit, offset int) ([]*entity.UserStudyRekap, int64, error)
 	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
 }
 
@@ -110,11 +110,13 @@ func (r *UserStudyRepository) Create(ctx context.Context, req *entity.UserStudy)
 	return req, nil
 }
 
-func (r *UserStudyRepository) FindUserStudyRekap(ctx context.Context) ([]*entity.UserStudyRekap, error) {
+func (r *UserStudyRepository) FindUserStudyRekap(ctx context.Context, limit, offset int) ([]*entity.UserStudyRekap, int64, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "UserStudyRepository - FindUserStudyRekap")
 	defer span.End()
 
 	var userStudyRekap []*entity.UserStudyRekap
+	var totalRecords int64
+
 	query := `
 		SELECT
 		r.kode_prodi, p.nama AS nama_prodi, p.akronim_fakultas AS fakultas, p.jenjang,
@@ -130,10 +132,26 @@ func (r *UserStudyRepository) FindUserStudyRekap(ctx context.Context) ([]*entity
 	`
 	if err := r.db.Debug().WithContext(ctxSpan).Raw(query).Scan(&userStudyRekap).Error; err != nil {
 		log.Println("ERROR: [UserStudyRepository - FindUserStudyRekap] Internal server error:", err)
-		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}
 
-	return userStudyRekap, nil
+	countQuery := `
+		SELECT COUNT(*)
+		FROM (
+			SELECT r.kode_prodi
+			FROM responden r
+			JOIN ref_prodi p ON r.kode_prodi = p.kode
+			LEFT JOIN pkts pk ON r.nim = pk.nim
+			LEFT JOIN user_study us ON us.nim_lulusan = pk.nim
+			GROUP BY r.kode_prodi
+		) AS count_table;
+	`
+	if err := r.db.Debug().WithContext(ctxSpan).Raw(countQuery).Scan(&totalRecords).Error; err != nil {
+		log.Println("ERROR: [UserStudyRepository - FindUserStudyRekap] Internal server error:", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
+	}
+
+	return userStudyRekap, totalRecords, nil
 }
 
 func (r *UserStudyRepository) FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error) {

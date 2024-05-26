@@ -27,7 +27,7 @@ type UserStudyServiceUseCase interface {
 	Update(ctx context.Context, nim, emailResponden, hpResponden string, fields *entity.UserStudy) (*entity.UserStudy, error)
 	Create(ctx context.Context, namaResponden, emailResponden, hpResponden, namaInstansi, jabatan, alamatInstansi, nimLulusan, namaLulusan, prodiLulusan, tahunLulusan string) (*entity.UserStudy, error)
 	ExportUSReport(ctx context.Context) (*bytes.Buffer, error)
-	FindUserStudyRekap(ctx context.Context) ([]*entity.UserStudyRekap, error)
+	FindUserStudyRekap(ctx context.Context, limit, page uint32) ([]*entity.UserStudyRekap, int64, error)
 	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
 }
 
@@ -212,15 +212,17 @@ func (svc *UserStudyService) ExportUSReport(ctx context.Context) (*bytes.Buffer,
 	return buff, nil
 }
 
-func (svc *UserStudyService) FindUserStudyRekap(ctx context.Context) ([]*entity.UserStudyRekap, error) {
-	res, err := svc.userStudyRepository.FindUserStudyRekap(ctx)
+func (svc *UserStudyService) FindUserStudyRekap(ctx context.Context, limit, page uint32) ([]*entity.UserStudyRekap, int64, error) {
+	offset := (page - 1) * limit
+
+	res, totalRecords, err := svc.userStudyRepository.FindUserStudyRekap(ctx, int(limit), int(offset))
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyService - FindUserStudyRekap] Error while find user study rekap:", parseError.Message)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return res, nil
+	return res, totalRecords, nil
 }
 
 func (svc *UserStudyService) FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error) {
