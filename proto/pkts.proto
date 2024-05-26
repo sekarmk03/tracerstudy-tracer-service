@@ -4,7 +4,6 @@ package tracer_study_grpc;
 option go_package = "./;pb";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
 import "pagination.proto";
 
 message PKTS {
@@ -203,7 +202,7 @@ message GetPKTSRekapByYearResponse {
 }
 
 service PKTSService {
-    rpc GetAllPKTS(google.protobuf.Empty) returns (GetAllPKTSResponse);
+    rpc GetAllPKTS(GetAllPKTSRequest) returns (GetAllPKTSResponse);
     rpc GetPKTSByNim(GetPKTSByNimRequest) returns (GetPKTSResponse);
     rpc CreatePKTS(PKTS) returns (GetPKTSResponse);
     rpc UpdatePKTS(PKTS) returns (GetPKTSResponse);

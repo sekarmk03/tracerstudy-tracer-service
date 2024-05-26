@@ -32,7 +32,7 @@ type PKTSRepositoryUseCase interface {
 	FindByAtasan(ctx context.Context, namaA, hpA, emailA string) ([]*string, error)
 	FindAllReport(ctx context.Context, tahunSidang string) ([]*entity.PKTSReport, error)
 	FindPKTSRekapByProdi(ctx context.Context, limit, offset int, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, int64, error)
-	FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error)
+	FindPKTSRekapByYear(ctx context.Context, limit, offset int, tahunSidang string) ([]*entity.PKTSRekapByYear, int64, error)
 }
 
 func (p *PKTSRepository) FindAll(ctx context.Context, limit, offset int) ([]*entity.PKTS, int64, error) {
@@ -214,11 +214,30 @@ func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, limit, offset
 	return pkts, totalRecords, nil
 }
 
-func (p *PKTSRepository) FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error) {
+func (p *PKTSRepository) FindPKTSRekapByYear(ctx context.Context, limit, offset int, tahunSidang string) ([]*entity.PKTSRekapByYear, int64, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "PKTSRepository - FindPKTSRekap")
 	defer span.End()
 
 	var pkts []*entity.PKTSRekapByYear
+	var totalRecords int64
+
+	countQuery := `
+        SELECT COUNT(*)
+        FROM (
+            SELECT r.kode_prodi
+            FROM responden r
+            JOIN ref_prodi p ON r.kode_prodi = p.kode
+            LEFT JOIN pkts pk ON r.nim = pk.nim
+            LEFT JOIN ref_provinsi pv ON pk.f5a1 = pv.id_wil
+            WHERE r.tahun_sidang = ?
+            GROUP BY r.kode_prodi
+        ) AS count_table;
+    `
+    if err := p.db.Debug().WithContext(ctxSpan).Raw(countQuery, tahunSidang).Scan(&totalRecords).Error; err != nil {
+        log.Println("ERROR: [PKTSRepository - FindPKTSRekapByYear] Internal server error:", err)
+        return nil, 0, status.Errorf(codes.Internal, "%v", err)
+    }
+
 	query := `
 		SELECT
 		r.kode_prodi, p.nama AS nama_prodi, p.akronim_fakultas AS fakultas, p.jenjang,
@@ -236,12 +255,13 @@ func (p *PKTSRepository) FindPKTSRekapByYear(ctx context.Context, tahunSidang st
 		LEFT JOIN pkts pk ON r.nim = pk.nim
 		LEFT JOIN ref_provinsi pv ON pk.f5a1 = pv.id_wil
 		WHERE r.tahun_sidang = ?
-		GROUP BY r.kode_prodi;
+		GROUP BY r.kode_prodi
+		LIMIT ? OFFSET ?;
 	`
-	if err := p.db.Debug().WithContext(ctxSpan).Raw(query, tahunSidang).Scan(&pkts).Error; err != nil {
+	if err := p.db.Debug().WithContext(ctxSpan).Raw(query, tahunSidang, limit, offset).Scan(&pkts).Error; err != nil {
 		log.Println("ERROR: [PKTSRepository - FindPKTSRekapByYear] Internal server error:", err)
-		return nil, status.Errorf(codes.Internal, "%v", err)
+		return nil, 0, status.Errorf(codes.Internal, "%v", err)
 	}
 
-	return pkts, nil
+	return pkts, totalRecords, nil
 }

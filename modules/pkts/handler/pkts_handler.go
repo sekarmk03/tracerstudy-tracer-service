@@ -310,7 +310,7 @@ func (ph *PKTSHandler) GetPKTSRekapByProdi(ctx context.Context, req *pb.GetPKTSR
 }
 
 func (ph *PKTSHandler) GetPKTSRekapByYear(ctx context.Context, req *pb.GetPKTSRekapByYearRequest) (*pb.GetPKTSRekapByYearResponse, error) {
-	pktsRekap, err := ph.PKTSSvc.FindPKTSRekapByYear(ctx, req.GetTahunSidang())
+	pktsRekap, totalRecords, err := ph.PKTSSvc.FindPKTSRekapByYear(ctx, req.Pagination.Limit, req.Pagination.Page, req.GetTahunSidang())
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetPKTSRekapByYear] Internal server error:", parseError.Message)
@@ -327,9 +327,19 @@ func (ph *PKTSHandler) GetPKTSRekapByYear(ctx context.Context, req *pb.GetPKTSRe
 		pktsRekapArr = append(pktsRekapArr, pktsRekapProto)
 	}
 
+	totalPages := uint32(math.Ceil(float64(totalRecords) / float64(req.Pagination.Limit)))
+
+	pagination := &pb.Pagination{
+		TotalRows:   uint32(totalRecords),
+		TotalPages:  totalPages,
+		CurrentPage: req.Pagination.Page,
+		CurrentRows: uint32(len(pktsRekap)),
+	}
+
 	return &pb.GetPKTSRekapByYearResponse{
-		Code:    uint32(http.StatusOK),
-		Message: "get pkts rekap by year success",
-		Data:    pktsRekapArr,
+		Code:       uint32(http.StatusOK),
+		Message:    "get pkts rekap by year success",
+		Pagination: pagination,
+		Data:       pktsRekapArr,
 	}, nil
 }
