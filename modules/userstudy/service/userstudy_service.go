@@ -28,7 +28,7 @@ type UserStudyServiceUseCase interface {
 	Create(ctx context.Context, namaResponden, emailResponden, hpResponden, namaInstansi, jabatan, alamatInstansi, nimLulusan, namaLulusan, prodiLulusan, tahunLulusan string) (*entity.UserStudy, error)
 	ExportUSReport(ctx context.Context) (*bytes.Buffer, error)
 	FindUserStudyRekap(ctx context.Context, limit, page uint32) ([]*entity.UserStudyRekap, int64, error)
-	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
+	FindUserStudyRekapByProdi(ctx context.Context, limit, page uint32, kodeProdi string) ([]*entity.UserStudyRekapByProdi, int64, error)
 }
 
 func NewUserStudyService(cfg config.Config, userStudyRepository repository.UserStudyRepositoryUseCase) *UserStudyService {
@@ -225,13 +225,15 @@ func (svc *UserStudyService) FindUserStudyRekap(ctx context.Context, limit, page
 	return res, totalRecords, nil
 }
 
-func (svc *UserStudyService) FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error) {
-	res, err := svc.userStudyRepository.FindUserStudyRekapByProdi(ctx, kodeProdi)
+func (svc *UserStudyService) FindUserStudyRekapByProdi(ctx context.Context, limit, page uint32, kodeProdi string) ([]*entity.UserStudyRekapByProdi, int64, error) {
+	offset := (page - 1) * limit
+
+	res, totalRecords, err := svc.userStudyRepository.FindUserStudyRekapByProdi(ctx, int(limit), int(offset), kodeProdi)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyService - FindUserStudyRekapByProdi] Error while find user study rekap by prodi:", parseError.Message)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return res, nil
+	return res, totalRecords, nil
 }

@@ -29,7 +29,7 @@ type UserStudyRepositoryUseCase interface {
 	Update(ctx context.Context, userStudy *entity.UserStudy, updatedFields map[string]interface{}) (*entity.UserStudy, error)
 	Create(ctx context.Context, req *entity.UserStudy) (*entity.UserStudy, error)
 	FindUserStudyRekap(ctx context.Context, limit, offset int) ([]*entity.UserStudyRekap, int64, error)
-	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
+	FindUserStudyRekapByProdi(ctx context.Context, limit, offset int, kodeProdi string) ([]*entity.UserStudyRekapByProdi, int64, error)
 }
 
 func (r *UserStudyRepository) FindAll(ctx context.Context, limit, offset int) ([]*entity.UserStudy, int64, error) {
@@ -154,11 +154,26 @@ func (r *UserStudyRepository) FindUserStudyRekap(ctx context.Context, limit, off
 	return userStudyRekap, totalRecords, nil
 }
 
-func (r *UserStudyRepository) FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error) {
+func (r *UserStudyRepository) FindUserStudyRekapByProdi(ctx context.Context, limit, offset int, kodeProdi string) ([]*entity.UserStudyRekapByProdi, int64, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "UserStudyRepository - FindUserStudyRekapByProdi")
 	defer span.End()
 
 	var userStudyRekapByProdi []*entity.UserStudyRekapByProdi
+	var totalRecords int64
+
+	countQuery := `
+		SELECT COUNT(*)
+		FROM responden r
+		LEFT JOIN pkts pk ON r.nim = pk.nim
+		LEFT JOIN user_study us ON r.nim = us.nim_lulusan
+		WHERE pk.f8 IN (1, 3)
+		AND r.kode_prodi = ?;
+	`
+	if err := r.db.Debug().WithContext(ctxSpan).Raw(countQuery, kodeProdi).Scan(&totalRecords).Error; err != nil {
+		log.Println("ERROR: [UserStudyRepository - FindUserStudyRekapByProdi] Internal server error:", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
+	}
+
 	query := `
 		SELECT 
 		r.nim,
@@ -249,8 +264,8 @@ func (r *UserStudyRepository) FindUserStudyRekapByProdi(ctx context.Context, kod
 	`
 	if err := r.db.Debug().WithContext(ctxSpan).Raw(query, kodeProdi).Scan(&userStudyRekapByProdi).Error; err != nil {
 		log.Println("ERROR: [UserStudyRepository - FindUserStudyRekapByProdi] Internal server error:", err)
-		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}
 
-	return userStudyRekapByProdi, nil
+	return userStudyRekapByProdi, totalRecords, nil
 }

@@ -292,7 +292,7 @@ func (uh *UserStudyHandler) GetUserStudyRekap(ctx context.Context, req *pb.GetUs
 }
 
 func (uh *UserStudyHandler) GetUserStudyRekapByProdi(ctx context.Context, req *pb.GetUserStudyRekapByProdiRequest) (*pb.GetUserStudyRekapByProdiResponse, error) {
-	rekap, err := uh.userStudySvc.FindUserStudyRekapByProdi(ctx, req.GetKodeProdi())
+	rekap, totalRecords, err := uh.userStudySvc.FindUserStudyRekapByProdi(ctx, req.Pagination.Limit, req.Pagination.Page, req.GetKodeProdi())
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - GetUserStudyRekapByProdi] Error while get user study rekap by prodi:", parseError.Message)
@@ -309,9 +309,19 @@ func (uh *UserStudyHandler) GetUserStudyRekapByProdi(ctx context.Context, req *p
 		rekapArr = append(rekapArr, rekapProto)
 	}
 
+	totalPages := uint32(math.Ceil(float64(totalRecords) / float64(req.Pagination.Limit)))
+
+	pagination := &pb.Pagination{
+		TotalRows:   uint32(totalRecords),
+		TotalPages:  totalPages,
+		CurrentPage: req.Pagination.Page,
+		CurrentRows: uint32(len(rekapArr)),
+	}
+
 	return &pb.GetUserStudyRekapByProdiResponse{
-		Code:    uint32(http.StatusOK),
-		Message: "get user study rekap by prodi success",
-		Data:    rekapArr,
+		Code:       uint32(http.StatusOK),
+		Message:    "get user study rekap by prodi success",
+		Pagination: pagination,
+		Data:       rekapArr,
 	}, nil
 }
