@@ -53,7 +53,7 @@ func (ph *PKTSHandler) GetAllPKTS(ctx context.Context, req *pb.GetAllPKTSRequest
 		TotalRows:   uint32(totalRecords),
 		TotalPages:  totalPages,
 		CurrentPage: req.Pagination.Page,
-		CurrentRows: uint32(len(pkts)),
+		CurrentRows: uint32(len(pktsArr)),
 	}
 
 	return &pb.GetAllPKTSResponse{

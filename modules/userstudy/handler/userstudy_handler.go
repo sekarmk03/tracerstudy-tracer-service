@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"log"
+	"math"
 	"net/http"
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
@@ -41,13 +42,13 @@ func NewUserStudyHandler(
 	}
 }
 
-func (uh *UserStudyHandler) GetAllUserStudy(ctx context.Context, req *emptypb.Empty) (*pb.MultipleUserStudyResponse, error) {
-	userStudy, err := uh.userStudySvc.FindAll(ctx)
+func (uh *UserStudyHandler) GetAllUserStudy(ctx context.Context, req *pb.GetAllUserStudyRequest) (*pb.GetAllUserStudyResponse, error) {
+	userStudy, totalRecords, err := uh.userStudySvc.FindAll(ctx, req.Pagination.Limit, req.Pagination.Page)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - GetAllUserStudy] Error while get all user study:", parseError.Message)
 		// return nil, status.Errorf(parseError.Code, parseError.Message)
-		return &pb.MultipleUserStudyResponse{
+		return &pb.GetAllUserStudyResponse{
 			Code:    uint32(http.StatusInternalServerError),
 			Message: parseError.Message,
 		}, status.Errorf(parseError.Code, parseError.Message)
@@ -59,10 +60,20 @@ func (uh *UserStudyHandler) GetAllUserStudy(ctx context.Context, req *emptypb.Em
 		userStudyArr = append(userStudyArr, userStudyProto)
 	}
 
-	return &pb.MultipleUserStudyResponse{
-		Code:    uint32(http.StatusOK),
-		Message: "get all user study success",
-		Data:    userStudyArr,
+	totalPages := uint32(math.Ceil(float64(totalRecords) / float64(req.Pagination.Limit)))
+
+	pagination := &pb.Pagination{
+		TotalRows:   uint32(totalRecords),
+		TotalPages:  totalPages,
+		CurrentPage: req.Pagination.Page,
+		CurrentRows: uint32(len(userStudyArr)),
+	}
+
+	return &pb.GetAllUserStudyResponse{
+		Code:       uint32(http.StatusOK),
+		Message:    "get all user study success",
+		Pagination: pagination,
+		Data:       userStudyArr,
 	}, nil
 }
 

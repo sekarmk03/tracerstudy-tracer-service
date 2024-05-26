@@ -24,7 +24,7 @@ func NewUserStudyRepository(db *gorm.DB) *UserStudyRepository {
 }
 
 type UserStudyRepositoryUseCase interface {
-	FindAll(ctx context.Context) ([]*entity.UserStudy, error)
+	FindAll(ctx context.Context, limit, offset int) ([]*entity.UserStudy, int64, error)
 	FindByNim(ctx context.Context, nim, emailResponden, hpResponden string) (*entity.UserStudy, error)
 	Update(ctx context.Context, userStudy *entity.UserStudy, updatedFields map[string]interface{}) (*entity.UserStudy, error)
 	Create(ctx context.Context, req *entity.UserStudy) (*entity.UserStudy, error)
@@ -32,17 +32,35 @@ type UserStudyRepositoryUseCase interface {
 	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
 }
 
-func (r *UserStudyRepository) FindAll(ctx context.Context) ([]*entity.UserStudy, error) {
+func (r *UserStudyRepository) FindAll(ctx context.Context, limit, offset int) ([]*entity.UserStudy, int64, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "UserStudyRepository - FindAll")
 	defer span.End()
 
 	var userStudy []*entity.UserStudy
-	if err := r.db.Debug().WithContext(ctxSpan).Order("created_at desc").Find(&userStudy).Error; err != nil {
-		log.Println("ERROR: [UserStudyRepository - FindAll] Internal server error:", err)
-		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
+	var totalRecords int64
+
+	if limit == 0 && offset == 0 {
+		if err := r.db.Debug().WithContext(ctxSpan).Order("created_at desc").Find(&userStudy).Error; err != nil {
+			log.Println("ERROR: [UserStudyRepository - FindAll] Internal server error:", err)
+			return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
+		}
+	} else {
+		if err := r.db.Debug().WithContext(ctxSpan).
+		Order("created_at desc").
+		Limit(limit).
+		Offset(offset).
+		Find(&userStudy).Error; err != nil {
+			log.Println("ERROR: [UserStudyRepository - FindAll] Internal server error:", err)
+			return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
+		}
 	}
 
-	return userStudy, nil
+	if err := r.db.Debug().WithContext(ctxSpan).Model(&entity.UserStudy{}).Count(&totalRecords).Error; err != nil {
+		log.Println("ERROR: [UserStudyRepository - FindAll] Internal server error:", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
+	}
+
+	return userStudy, totalRecords, nil
 }
 
 func (r *UserStudyRepository) FindByNim(ctx context.Context, nim, emailResponden, hpResponden string) (*entity.UserStudy, error) {

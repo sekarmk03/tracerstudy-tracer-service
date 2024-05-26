@@ -34,13 +34,13 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UserStudyServiceClient interface {
-	GetAllUserStudy(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MultipleUserStudyResponse, error)
+	GetAllUserStudy(ctx context.Context, in *GetAllUserStudyRequest, opts ...grpc.CallOption) (*GetAllUserStudyResponse, error)
 	GetUserStudyByNim(ctx context.Context, in *GetUserStudyByNimRequest, opts ...grpc.CallOption) (*SingleUserStudyResponse, error)
 	CreateUserStudy(ctx context.Context, in *UserStudy, opts ...grpc.CallOption) (*SingleUserStudyResponse, error)
 	UpdateUserStudy(ctx context.Context, in *UserStudy, opts ...grpc.CallOption) (*SingleUserStudyResponse, error)
 	ExportUSReport(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ExportUSReportResponse, error)
 	GetAlumniListByAtasan(ctx context.Context, in *GetAlumniByAtasanRequest, opts ...grpc.CallOption) (*GetAlumniByAtasanResponse, error)
-	GetUserStudyRekap(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetUserStudyRekapResponse, error)
+	GetUserStudyRekap(ctx context.Context, in *GetUserStudyRekapRequest, opts ...grpc.CallOption) (*GetUserStudyRekapResponse, error)
 	GetUserStudyRekapByProdi(ctx context.Context, in *GetUserStudyRekapByProdiRequest, opts ...grpc.CallOption) (*GetUserStudyRekapByProdiResponse, error)
 }
 
@@ -52,8 +52,8 @@ func NewUserStudyServiceClient(cc grpc.ClientConnInterface) UserStudyServiceClie
 	return &userStudyServiceClient{cc}
 }
 
-func (c *userStudyServiceClient) GetAllUserStudy(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*MultipleUserStudyResponse, error) {
-	out := new(MultipleUserStudyResponse)
+func (c *userStudyServiceClient) GetAllUserStudy(ctx context.Context, in *GetAllUserStudyRequest, opts ...grpc.CallOption) (*GetAllUserStudyResponse, error) {
+	out := new(GetAllUserStudyResponse)
 	err := c.cc.Invoke(ctx, UserStudyService_GetAllUserStudy_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (c *userStudyServiceClient) GetAlumniListByAtasan(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *userStudyServiceClient) GetUserStudyRekap(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetUserStudyRekapResponse, error) {
+func (c *userStudyServiceClient) GetUserStudyRekap(ctx context.Context, in *GetUserStudyRekapRequest, opts ...grpc.CallOption) (*GetUserStudyRekapResponse, error) {
 	out := new(GetUserStudyRekapResponse)
 	err := c.cc.Invoke(ctx, UserStudyService_GetUserStudyRekap_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -128,13 +128,13 @@ func (c *userStudyServiceClient) GetUserStudyRekapByProdi(ctx context.Context, i
 // All implementations must embed UnimplementedUserStudyServiceServer
 // for forward compatibility
 type UserStudyServiceServer interface {
-	GetAllUserStudy(context.Context, *emptypb.Empty) (*MultipleUserStudyResponse, error)
+	GetAllUserStudy(context.Context, *GetAllUserStudyRequest) (*GetAllUserStudyResponse, error)
 	GetUserStudyByNim(context.Context, *GetUserStudyByNimRequest) (*SingleUserStudyResponse, error)
 	CreateUserStudy(context.Context, *UserStudy) (*SingleUserStudyResponse, error)
 	UpdateUserStudy(context.Context, *UserStudy) (*SingleUserStudyResponse, error)
 	ExportUSReport(context.Context, *emptypb.Empty) (*ExportUSReportResponse, error)
 	GetAlumniListByAtasan(context.Context, *GetAlumniByAtasanRequest) (*GetAlumniByAtasanResponse, error)
-	GetUserStudyRekap(context.Context, *emptypb.Empty) (*GetUserStudyRekapResponse, error)
+	GetUserStudyRekap(context.Context, *GetUserStudyRekapRequest) (*GetUserStudyRekapResponse, error)
 	GetUserStudyRekapByProdi(context.Context, *GetUserStudyRekapByProdiRequest) (*GetUserStudyRekapByProdiResponse, error)
 	mustEmbedUnimplementedUserStudyServiceServer()
 }
@@ -143,7 +143,7 @@ type UserStudyServiceServer interface {
 type UnimplementedUserStudyServiceServer struct {
 }
 
-func (UnimplementedUserStudyServiceServer) GetAllUserStudy(context.Context, *emptypb.Empty) (*MultipleUserStudyResponse, error) {
+func (UnimplementedUserStudyServiceServer) GetAllUserStudy(context.Context, *GetAllUserStudyRequest) (*GetAllUserStudyResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllUserStudy not implemented")
 }
 func (UnimplementedUserStudyServiceServer) GetUserStudyByNim(context.Context, *GetUserStudyByNimRequest) (*SingleUserStudyResponse, error) {
@@ -161,7 +161,7 @@ func (UnimplementedUserStudyServiceServer) ExportUSReport(context.Context, *empt
 func (UnimplementedUserStudyServiceServer) GetAlumniListByAtasan(context.Context, *GetAlumniByAtasanRequest) (*GetAlumniByAtasanResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAlumniListByAtasan not implemented")
 }
-func (UnimplementedUserStudyServiceServer) GetUserStudyRekap(context.Context, *emptypb.Empty) (*GetUserStudyRekapResponse, error) {
+func (UnimplementedUserStudyServiceServer) GetUserStudyRekap(context.Context, *GetUserStudyRekapRequest) (*GetUserStudyRekapResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserStudyRekap not implemented")
 }
 func (UnimplementedUserStudyServiceServer) GetUserStudyRekapByProdi(context.Context, *GetUserStudyRekapByProdiRequest) (*GetUserStudyRekapByProdiResponse, error) {
@@ -181,7 +181,7 @@ func RegisterUserStudyServiceServer(s grpc.ServiceRegistrar, srv UserStudyServic
 }
 
 func _UserStudyService_GetAllUserStudy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(GetAllUserStudyRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -193,7 +193,7 @@ func _UserStudyService_GetAllUserStudy_Handler(srv interface{}, ctx context.Cont
 		FullMethod: UserStudyService_GetAllUserStudy_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserStudyServiceServer).GetAllUserStudy(ctx, req.(*emptypb.Empty))
+		return srv.(UserStudyServiceServer).GetAllUserStudy(ctx, req.(*GetAllUserStudyRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -289,7 +289,7 @@ func _UserStudyService_GetAlumniListByAtasan_Handler(srv interface{}, ctx contex
 }
 
 func _UserStudyService_GetUserStudyRekap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(GetUserStudyRekapRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -301,7 +301,7 @@ func _UserStudyService_GetUserStudyRekap_Handler(srv interface{}, ctx context.Co
 		FullMethod: UserStudyService_GetUserStudyRekap_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserStudyServiceServer).GetUserStudyRekap(ctx, req.(*emptypb.Empty))
+		return srv.(UserStudyServiceServer).GetUserStudyRekap(ctx, req.(*GetUserStudyRekapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -6,6 +6,7 @@ option go_package = "./;pb";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "responden.proto";
+import "pagination.proto";
 
 message UserStudy {
     uint64 id = 1;
@@ -43,10 +44,15 @@ message SingleUserStudyResponse {
     UserStudy data = 3;
 }
 
-message MultipleUserStudyResponse {
+message GetAllUserStudyRequest {
+    general.PaginationRequest pagination = 1;
+}
+
+message GetAllUserStudyResponse {
     uint32 code = 1;
     string message = 2;
-    repeated UserStudy data = 3;
+    general.Pagination pagination = 3;
+    repeated UserStudy data = 4;
 }
 
 message GetUserStudyByNimRequest {
@@ -84,10 +90,15 @@ message UserStudyRekap {
     double user_study_percentage = 8;
 }
 
+message GetUserStudyRekapRequest {
+    general.PaginationRequest pagination = 1;
+}
+
 message GetUserStudyRekapResponse {
     uint32 code = 1;
     string message = 2;
-    repeated UserStudyRekap data = 3;
+    general.Pagination pagination = 3;
+    repeated UserStudyRekap data = 4;
 }
 
 message UserStudyRekapByProdi {
@@ -107,22 +118,24 @@ message UserStudyRekapByProdi {
 }
 
 message GetUserStudyRekapByProdiRequest {
-    string kode_prodi = 1;
+    general.PaginationRequest pagination = 1;
+    string kode_prodi = 2;
 }
 
 message GetUserStudyRekapByProdiResponse {
     uint32 code = 1;
     string message = 2;
-    repeated UserStudyRekapByProdi data = 3;
+    general.Pagination pagination = 3;
+    repeated UserStudyRekapByProdi data = 4;
 }
 
 service UserStudyService {
-    rpc GetAllUserStudy(google.protobuf.Empty) returns (MultipleUserStudyResponse) {};
+    rpc GetAllUserStudy(GetAllUserStudyRequest) returns (GetAllUserStudyResponse) {};
     rpc GetUserStudyByNim(GetUserStudyByNimRequest) returns (SingleUserStudyResponse) {};
     rpc CreateUserStudy(UserStudy) returns (SingleUserStudyResponse) {};
     rpc UpdateUserStudy(UserStudy) returns (SingleUserStudyResponse) {};
     rpc ExportUSReport(google.protobuf.Empty) returns (ExportUSReportResponse) {};
     rpc GetAlumniListByAtasan(GetAlumniByAtasanRequest) returns (GetAlumniByAtasanResponse) {};
-    rpc GetUserStudyRekap(google.protobuf.Empty) returns (GetUserStudyRekapResponse) {};
+    rpc GetUserStudyRekap(GetUserStudyRekapRequest) returns (GetUserStudyRekapResponse) {};
     rpc GetUserStudyRekapByProdi(GetUserStudyRekapByProdiRequest) returns (GetUserStudyRekapByProdiResponse) {};
 }
