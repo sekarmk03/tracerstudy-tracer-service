@@ -22,7 +22,7 @@ type PKTSService struct {
 }
 
 type PKTSServiceUseCase interface {
-	FindAll(ctx context.Context) ([]*entity.PKTS, error)
+	FindAll(ctx context.Context, limit, page uint32) ([]*entity.PKTS, int64, error)
 	FindByNim(ctx context.Context, nim string) (*entity.PKTS, error)
 	Create(ctx context.Context, nim, kodeProdi, tahunSidang string) (*entity.PKTS, error)
 	Update(ctx context.Context, nim string, fields *entity.PKTS) (*entity.PKTS, error)
@@ -39,15 +39,17 @@ func NewPKTSService(cfg config.Config, pktsRepository repository.PKTSRepositoryU
 	}
 }
 
-func (svc *PKTSService) FindAll(ctx context.Context) ([]*entity.PKTS, error) {
-	res, err := svc.pktsRepository.FindAll(ctx)
+func (svc *PKTSService) FindAll(ctx context.Context, limit, page uint32) ([]*entity.PKTS, int64, error) {
+	offset := (page - 1) * limit
+
+	res, totalRecords, err := svc.pktsRepository.FindAll(ctx, int(limit), int(offset))
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSService - FindAll] Error while find all pkts:", parseError.Message)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return res, nil
+	return res, totalRecords, nil
 }
 
 func (svc *PKTSService) FindByNim(ctx context.Context, nim string) (*entity.PKTS, error) {

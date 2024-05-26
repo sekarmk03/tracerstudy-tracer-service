@@ -25,7 +25,7 @@ func NewPKTSRepository(db *gorm.DB) *PKTSRepository {
 }
 
 type PKTSRepositoryUseCase interface {
-	FindAll(ctx context.Context) ([]*entity.PKTS, error)
+	FindAll(ctx context.Context, limit, offset int) ([]*entity.PKTS, int64, error)
 	FindByNim(ctx context.Context, nim string) (*entity.PKTS, error)
 	Create(ctx context.Context, req *entity.PKTS) (*entity.PKTS, error)
 	Update(ctx context.Context, pkts *entity.PKTS, updatedFields map[string]interface{}) (*entity.PKTS, error)
@@ -35,17 +35,28 @@ type PKTSRepositoryUseCase interface {
 	FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error)
 }
 
-func (p *PKTSRepository) FindAll(ctx context.Context) ([]*entity.PKTS, error) {
+func (p *PKTSRepository) FindAll(ctx context.Context, limit, offset int) ([]*entity.PKTS, int64, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "PKTSRepository - FindAll")
 	defer span.End()
 
 	var pkts []*entity.PKTS
-	if err := p.db.Debug().WithContext(ctxSpan).Order("created_at desc").Limit(50).Find(&pkts).Error; err != nil {
+	var totalRecords int64
+
+	if err := p.db.Debug().WithContext(ctxSpan).
+	Order("created_at desc").
+	Limit(limit).
+	Offset(offset).
+	Find(&pkts).Error; err != nil {
 		log.Println("ERROR: [PKTSRepository - FindAll] Internal server error:", err)
-		return nil, status.Errorf(codes.Internal, "%v", err)
+		return nil, 0, status.Errorf(codes.Internal, "%v", err)
 	}
 
-	return pkts, nil
+	if err := p.db.Debug().WithContext(ctxSpan).Model(&entity.PKTS{}).Count(&totalRecords).Error; err != nil {
+        log.Println("ERROR: [PKTSRepository - FindAll] Internal server error:", err)
+        return nil, 0, status.Errorf(codes.Internal, "%v", err)
+    }
+
+	return pkts, totalRecords, nil
 }
 
 func (p *PKTSRepository) FindByNim(ctx context.Context, nim string) (*entity.PKTS, error) {

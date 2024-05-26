@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"log"
+	"math"
 	"net/http"
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
@@ -13,7 +14,6 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type PKTSHandler struct {
@@ -29,8 +29,8 @@ func NewPKTSHandler(config config.Config, pktsService service.PKTSServiceUseCase
 	}
 }
 
-func (ph *PKTSHandler) GetAllPKTS(ctx context.Context, req *emptypb.Empty) (*pb.GetAllPKTSResponse, error) {
-	pkts, err := ph.PKTSSvc.FindAll(ctx)
+func (ph *PKTSHandler) GetAllPKTS(ctx context.Context, req *pb.GetAllPKTSRequest) (*pb.GetAllPKTSResponse, error) {
+	pkts, totalRecords, err := ph.PKTSSvc.FindAll(ctx, req.Pagination.Limit, req.Pagination.Page)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetAllPKTS] Internal server error:", parseError.Message)
@@ -47,9 +47,19 @@ func (ph *PKTSHandler) GetAllPKTS(ctx context.Context, req *emptypb.Empty) (*pb.
 		pktsArr = append(pktsArr, pktsProto)
 	}
 
+	totalPages := uint32(math.Ceil(float64(totalRecords) / float64(req.Pagination.Limit)))
+
+	pagination := &pb.Pagination{
+		TotalRows: uint32(totalRecords),
+		TotalPages:   totalPages,
+		CurrentPage:  req.Pagination.Page,
+		CurrentRows: uint32(len(pkts)),
+	}
+
 	return &pb.GetAllPKTSResponse{
 		Code:    uint32(http.StatusOK),
 		Message: "get all pkts success",
+		Pagination: pagination,
 		Data:    pktsArr,
 	}, nil
 }
