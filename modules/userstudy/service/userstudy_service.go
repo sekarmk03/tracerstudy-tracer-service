@@ -22,12 +22,12 @@ type UserStudyService struct {
 }
 
 type UserStudyServiceUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.UserStudy, error)
+	FindAll(ctx context.Context) ([]*entity.UserStudy, error)
 	FindByNim(ctx context.Context, nim, emailResponden, hpResponden string) (*entity.UserStudy, error)
 	Update(ctx context.Context, nim, emailResponden, hpResponden string, fields *entity.UserStudy) (*entity.UserStudy, error)
 	Create(ctx context.Context, namaResponden, emailResponden, hpResponden, namaInstansi, jabatan, alamatInstansi, nimLulusan, namaLulusan, prodiLulusan, tahunLulusan string) (*entity.UserStudy, error)
-	ExportUSReport(ctx context.Context, req any) (*bytes.Buffer, error)
-	FindUserStudyRekap(ctx context.Context, req any) ([]*entity.UserStudyRekap, error)
+	ExportUSReport(ctx context.Context) (*bytes.Buffer, error)
+	FindUserStudyRekap(ctx context.Context) ([]*entity.UserStudyRekap, error)
 	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
 }
 
@@ -38,8 +38,8 @@ func NewUserStudyService(cfg config.Config, userStudyRepository repository.UserS
 	}
 }
 
-func (svc *UserStudyService) FindAll(ctx context.Context, req any) ([]*entity.UserStudy, error) {
-	res, err := svc.userStudyRepository.FindAll(ctx, req)
+func (svc *UserStudyService) FindAll(ctx context.Context) ([]*entity.UserStudy, error) {
+	res, err := svc.userStudyRepository.FindAll(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyService - FindAll] Error while find all user study:", parseError.Message)
@@ -125,8 +125,8 @@ func (svc *UserStudyService) Create(ctx context.Context, namaResponden, emailRes
 	return res, nil
 }
 
-func (svc *UserStudyService) ExportUSReport(ctx context.Context, req any) (*bytes.Buffer, error) {
-	rows, err := svc.userStudyRepository.FindAll(ctx, req)
+func (svc *UserStudyService) ExportUSReport(ctx context.Context) (*bytes.Buffer, error) {
+	rows, err := svc.userStudyRepository.FindAll(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyService - FindAll] Error while find all pkts:", parseError.Message)
@@ -210,8 +210,8 @@ func (svc *UserStudyService) ExportUSReport(ctx context.Context, req any) (*byte
 	return buff, nil
 }
 
-func (svc *UserStudyService) FindUserStudyRekap(ctx context.Context, req any) ([]*entity.UserStudyRekap, error) {
-	res, err := svc.userStudyRepository.FindUserStudyRekap(ctx, req)
+func (svc *UserStudyService) FindUserStudyRekap(ctx context.Context) ([]*entity.UserStudyRekap, error) {
+	res, err := svc.userStudyRepository.FindUserStudyRekap(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyService - FindUserStudyRekap] Error while find user study rekap:", parseError.Message)

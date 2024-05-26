@@ -24,15 +24,15 @@ func NewUserStudyRepository(db *gorm.DB) *UserStudyRepository {
 }
 
 type UserStudyRepositoryUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.UserStudy, error)
+	FindAll(ctx context.Context) ([]*entity.UserStudy, error)
 	FindByNim(ctx context.Context, nim, emailResponden, hpResponden string) (*entity.UserStudy, error)
 	Update(ctx context.Context, userStudy *entity.UserStudy, updatedFields map[string]interface{}) (*entity.UserStudy, error)
 	Create(ctx context.Context, req *entity.UserStudy) (*entity.UserStudy, error)
-	FindUserStudyRekap(ctx context.Context, req any) ([]*entity.UserStudyRekap, error)
+	FindUserStudyRekap(ctx context.Context) ([]*entity.UserStudyRekap, error)
 	FindUserStudyRekapByProdi(ctx context.Context, kodeProdi string) ([]*entity.UserStudyRekapByProdi, error)
 }
 
-func (r *UserStudyRepository) FindAll(ctx context.Context, req any) ([]*entity.UserStudy, error) {
+func (r *UserStudyRepository) FindAll(ctx context.Context) ([]*entity.UserStudy, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "UserStudyRepository - FindAll")
 	defer span.End()
 
@@ -92,7 +92,7 @@ func (r *UserStudyRepository) Create(ctx context.Context, req *entity.UserStudy)
 	return req, nil
 }
 
-func (r *UserStudyRepository) FindUserStudyRekap(ctx context.Context, req any) ([]*entity.UserStudyRekap, error) {
+func (r *UserStudyRepository) FindUserStudyRekap(ctx context.Context) ([]*entity.UserStudyRekap, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "UserStudyRepository - FindUserStudyRekap")
 	defer span.End()
 

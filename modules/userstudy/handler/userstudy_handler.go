@@ -42,7 +42,7 @@ func NewUserStudyHandler(
 }
 
 func (uh *UserStudyHandler) GetAllUserStudy(ctx context.Context, req *emptypb.Empty) (*pb.MultipleUserStudyResponse, error) {
-	userStudy, err := uh.userStudySvc.FindAll(ctx, req)
+	userStudy, err := uh.userStudySvc.FindAll(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - GetAllUserStudy] Error while get all user study:", parseError.Message)
@@ -176,7 +176,7 @@ func (uh *UserStudyHandler) CreateUserStudy(ctx context.Context, req *pb.UserStu
 }
 
 func (uh *UserStudyHandler) ExportUSReport(ctx context.Context, req *emptypb.Empty) (*pb.ExportUSReportResponse, error) {
-	us, err := uh.userStudySvc.ExportUSReport(ctx, req)
+	us, err := uh.userStudySvc.ExportUSReport(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - ExportUSReport] Internal server error:", parseError.Message)
@@ -246,7 +246,7 @@ func (uh *UserStudyHandler) GetAlumniListByAtasan(ctx context.Context, req *pb.G
 }
 
 func (uh *UserStudyHandler) GetUserStudyRekap(ctx context.Context, req *emptypb.Empty) (*pb.GetUserStudyRekapResponse, error) {
-	rekap, err := uh.userStudySvc.FindUserStudyRekap(ctx, req)
+	rekap, err := uh.userStudySvc.FindUserStudyRekap(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [UserStudyHandler - GetUserStudyRekap] Error while get user study rekap:", parseError.Message)
