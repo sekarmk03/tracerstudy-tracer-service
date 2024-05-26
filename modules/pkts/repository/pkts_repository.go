@@ -25,7 +25,7 @@ func NewPKTSRepository(db *gorm.DB) *PKTSRepository {
 }
 
 type PKTSRepositoryUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.PKTS, error)
+	FindAll(ctx context.Context) ([]*entity.PKTS, error)
 	FindByNim(ctx context.Context, nim string) (*entity.PKTS, error)
 	Create(ctx context.Context, req *entity.PKTS) (*entity.PKTS, error)
 	Update(ctx context.Context, pkts *entity.PKTS, updatedFields map[string]interface{}) (*entity.PKTS, error)
@@ -35,7 +35,7 @@ type PKTSRepositoryUseCase interface {
 	FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error)
 }
 
-func (p *PKTSRepository) FindAll(ctx context.Context, req any) ([]*entity.PKTS, error) {
+func (p *PKTSRepository) FindAll(ctx context.Context) ([]*entity.PKTS, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "PKTSRepository - FindAll")
 	defer span.End()
 

@@ -30,7 +30,7 @@ func NewPKTSHandler(config config.Config, pktsService service.PKTSServiceUseCase
 }
 
 func (ph *PKTSHandler) GetAllPKTS(ctx context.Context, req *emptypb.Empty) (*pb.GetAllPKTSResponse, error) {
-	pkts, err := ph.PKTSSvc.FindAll(ctx, req)
+	pkts, err := ph.PKTSSvc.FindAll(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetAllPKTS] Internal server error:", parseError.Message)
