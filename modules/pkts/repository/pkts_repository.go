@@ -31,7 +31,7 @@ type PKTSRepositoryUseCase interface {
 	Update(ctx context.Context, pkts *entity.PKTS, updatedFields map[string]interface{}) (*entity.PKTS, error)
 	FindByAtasan(ctx context.Context, namaA, hpA, emailA string) ([]*string, error)
 	FindAllReport(ctx context.Context, tahunSidang string) ([]*entity.PKTSReport, error)
-	FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, error)
+	FindPKTSRekapByProdi(ctx context.Context, limit, offset int, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, int64, error)
 	FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error)
 }
 
@@ -158,11 +158,26 @@ func (p *PKTSRepository) FindAllReport(ctx context.Context, tahunSidang string) 
 	return pkts, nil
 }
 
-func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, error) {
+func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, limit, offset int, kodeprodi, tahunSidang string) ([]*entity.PKTSRekapByProdi, int64, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "PKTSRepository - FindPKTSRekap")
 	defer span.End()
 
 	var pkts []*entity.PKTSRekapByProdi
+	var totalRecords int64
+
+    countQuery := `
+        SELECT COUNT(*)
+        FROM responden AS r
+        LEFT JOIN pkts AS pk ON pk.nim = r.nim
+        LEFT JOIN ref_provinsi AS p ON pk.f5a1 = p.id_wil
+        WHERE r.kode_prodi = ?
+        AND r.tahun_sidang = ?
+    `
+    if err := p.db.Debug().WithContext(ctxSpan).Raw(countQuery, kodeprodi, tahunSidang).Scan(&totalRecords).Error; err != nil {
+        log.Println("ERROR: [PKTSRepository - FindPKTSRekapByProdi] Internal server error:", err)
+        return nil, 0, status.Errorf(codes.Internal, "%v", err)
+    }
+
 	query := `
 		SELECT r.nim, r.nama, pk.f8, r.email, r.hp, r.tanggal_sidang, p.nama AS prov_kerja, pk.f505 AS penghasilan, pk.created_at AS input_pkts, pk.updated_at AS update_pkts,
 		CASE WHEN pk.nim IS NOT NULL THEN 'Sudah' ELSE 'Belum' END AS pkts_status
@@ -171,10 +186,13 @@ func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, ta
 		LEFT JOIN ref_provinsi AS p ON pk.f5a1 = p.id_wil
 		WHERE r.kode_prodi = ?
 		AND r.tahun_sidang = ?
+		LIMIT ? OFFSET ?;
 	`
-	if err := p.db.Debug().WithContext(ctxSpan).Raw(query, kodeprodi, tahunSidang).Scan(&pkts).Error; err != nil {
+	if err := p.db.Debug().WithContext(ctxSpan).
+	Raw(query, kodeprodi, tahunSidang, limit, offset).
+	Scan(&pkts).Error; err != nil {
 		log.Println("ERROR: [PKTSRepository - FindPKTSRekapByProdi] Internal server error:", err)
-		return nil, status.Errorf(codes.Internal, "%v", err)
+		return nil, 0, status.Errorf(codes.Internal, "%v", err)
 	}
 
 	codeToStatus := map[int]string{
@@ -193,7 +211,7 @@ func (p *PKTSRepository) FindPKTSRekapByProdi(ctx context.Context, kodeprodi, ta
 		p.Status = status
 	}
 
-	return pkts, nil
+	return pkts, totalRecords, nil
 }
 
 func (p *PKTSRepository) FindPKTSRekapByYear(ctx context.Context, tahunSidang string) ([]*entity.PKTSRekapByYear, error) {

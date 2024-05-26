@@ -186,7 +186,8 @@ message GetPKTSRekapByProdiRequest {
 message GetPKTSRekapByProdiResponse {
     uint32 code = 1;
     string message = 2;
-    repeated PKTSRekapByProdi data = 3;
+    general.Pagination pagination = 3;
+    repeated PKTSRekapByProdi data = 4;
 }
 
 message GetPKTSRekapByYearRequest {
@@ -197,7 +198,8 @@ message GetPKTSRekapByYearRequest {
 message GetPKTSRekapByYearResponse {
     uint32 code = 1;
     string message = 2;
-    repeated PKTSRekapByYear data = 3;
+    general.Pagination pagination = 3;
+    repeated PKTSRekapByYear data = 4;
 }
 
 service PKTSService {

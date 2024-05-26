@@ -50,17 +50,17 @@ func (ph *PKTSHandler) GetAllPKTS(ctx context.Context, req *pb.GetAllPKTSRequest
 	totalPages := uint32(math.Ceil(float64(totalRecords) / float64(req.Pagination.Limit)))
 
 	pagination := &pb.Pagination{
-		TotalRows: uint32(totalRecords),
-		TotalPages:   totalPages,
-		CurrentPage:  req.Pagination.Page,
+		TotalRows:   uint32(totalRecords),
+		TotalPages:  totalPages,
+		CurrentPage: req.Pagination.Page,
 		CurrentRows: uint32(len(pkts)),
 	}
 
 	return &pb.GetAllPKTSResponse{
-		Code:    uint32(http.StatusOK),
-		Message: "get all pkts success",
+		Code:       uint32(http.StatusOK),
+		Message:    "get all pkts success",
 		Pagination: pagination,
-		Data:    pktsArr,
+		Data:       pktsArr,
 	}, nil
 }
 
@@ -275,7 +275,7 @@ func (ph *PKTSHandler) ExportPKTSReport(ctx context.Context, req *pb.ExportPKTSR
 }
 
 func (ph *PKTSHandler) GetPKTSRekapByProdi(ctx context.Context, req *pb.GetPKTSRekapByProdiRequest) (*pb.GetPKTSRekapByProdiResponse, error) {
-	pktsRekap, err := ph.PKTSSvc.FindPKTSRekapByProdi(ctx, req.GetKodeprodi(), req.GetTahunSidang())
+	pktsRekap, totalRecords, err := ph.PKTSSvc.FindPKTSRekapByProdi(ctx, req.Pagination.Limit, req.Pagination.Page, req.GetKodeprodi(), req.GetTahunSidang())
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [PKTSHandler - GetPKTSRekapByProdi] Internal server error:", parseError.Message)
@@ -292,10 +292,20 @@ func (ph *PKTSHandler) GetPKTSRekapByProdi(ctx context.Context, req *pb.GetPKTSR
 		pktsRekapArr = append(pktsRekapArr, pktsRekapProto)
 	}
 
+	totalPages := uint32(math.Ceil(float64(totalRecords) / float64(req.Pagination.Limit)))
+
+	pagination := &pb.Pagination{
+		TotalRows:   uint32(totalRecords),
+		TotalPages:  totalPages,
+		CurrentPage: req.Pagination.Page,
+		CurrentRows: uint32(len(pktsRekap)),
+	}
+
 	return &pb.GetPKTSRekapByProdiResponse{
-		Code:    uint32(http.StatusOK),
-		Message: "get pkts rekap by prodi success",
-		Data:    pktsRekapArr,
+		Code:       uint32(http.StatusOK),
+		Message:    "get pkts rekap by prodi success",
+		Pagination: pagination,
+		Data:       pktsRekapArr,
 	}, nil
 }
 
