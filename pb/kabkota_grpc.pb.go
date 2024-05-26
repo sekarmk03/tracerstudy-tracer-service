@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,18 +20,20 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	KabKotaService_GetAllKabKota_FullMethodName     = "/tracer_study_grpc.KabKotaService/GetAllKabKota"
-	KabKotaService_GetKabKotaByIdWil_FullMethodName = "/tracer_study_grpc.KabKotaService/GetKabKotaByIdWil"
-	KabKotaService_CreateKabKota_FullMethodName     = "/tracer_study_grpc.KabKotaService/CreateKabKota"
-	KabKotaService_UpdateKabKota_FullMethodName     = "/tracer_study_grpc.KabKotaService/UpdateKabKota"
-	KabKotaService_DeleteKabKota_FullMethodName     = "/tracer_study_grpc.KabKotaService/DeleteKabKota"
+	KabKotaService_GetAllKabKota_FullMethodName        = "/tracer_study_grpc.KabKotaService/GetAllKabKota"
+	KabKotaService_GetKabKotaByProvinsi_FullMethodName = "/tracer_study_grpc.KabKotaService/GetKabKotaByProvinsi"
+	KabKotaService_GetKabKotaByIdWil_FullMethodName    = "/tracer_study_grpc.KabKotaService/GetKabKotaByIdWil"
+	KabKotaService_CreateKabKota_FullMethodName        = "/tracer_study_grpc.KabKotaService/CreateKabKota"
+	KabKotaService_UpdateKabKota_FullMethodName        = "/tracer_study_grpc.KabKotaService/UpdateKabKota"
+	KabKotaService_DeleteKabKota_FullMethodName        = "/tracer_study_grpc.KabKotaService/DeleteKabKota"
 )
 
 // KabKotaServiceClient is the client API for KabKotaService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type KabKotaServiceClient interface {
-	GetAllKabKota(ctx context.Context, in *GetAllKabKotaRequest, opts ...grpc.CallOption) (*GetAllKabKotaResponse, error)
+	GetAllKabKota(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllKabKotaResponse, error)
+	GetKabKotaByProvinsi(ctx context.Context, in *GetKabKotaByIdWilRequest, opts ...grpc.CallOption) (*GetAllKabKotaResponse, error)
 	GetKabKotaByIdWil(ctx context.Context, in *GetKabKotaByIdWilRequest, opts ...grpc.CallOption) (*GetKabKotaResponse, error)
 	CreateKabKota(ctx context.Context, in *KabKota, opts ...grpc.CallOption) (*GetKabKotaResponse, error)
 	UpdateKabKota(ctx context.Context, in *KabKota, opts ...grpc.CallOption) (*GetKabKotaResponse, error)
@@ -45,9 +48,18 @@ func NewKabKotaServiceClient(cc grpc.ClientConnInterface) KabKotaServiceClient {
 	return &kabKotaServiceClient{cc}
 }
 
-func (c *kabKotaServiceClient) GetAllKabKota(ctx context.Context, in *GetAllKabKotaRequest, opts ...grpc.CallOption) (*GetAllKabKotaResponse, error) {
+func (c *kabKotaServiceClient) GetAllKabKota(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllKabKotaResponse, error) {
 	out := new(GetAllKabKotaResponse)
 	err := c.cc.Invoke(ctx, KabKotaService_GetAllKabKota_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *kabKotaServiceClient) GetKabKotaByProvinsi(ctx context.Context, in *GetKabKotaByIdWilRequest, opts ...grpc.CallOption) (*GetAllKabKotaResponse, error) {
+	out := new(GetAllKabKotaResponse)
+	err := c.cc.Invoke(ctx, KabKotaService_GetKabKotaByProvinsi_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +106,8 @@ func (c *kabKotaServiceClient) DeleteKabKota(ctx context.Context, in *GetKabKota
 // All implementations must embed UnimplementedKabKotaServiceServer
 // for forward compatibility
 type KabKotaServiceServer interface {
-	GetAllKabKota(context.Context, *GetAllKabKotaRequest) (*GetAllKabKotaResponse, error)
+	GetAllKabKota(context.Context, *emptypb.Empty) (*GetAllKabKotaResponse, error)
+	GetKabKotaByProvinsi(context.Context, *GetKabKotaByIdWilRequest) (*GetAllKabKotaResponse, error)
 	GetKabKotaByIdWil(context.Context, *GetKabKotaByIdWilRequest) (*GetKabKotaResponse, error)
 	CreateKabKota(context.Context, *KabKota) (*GetKabKotaResponse, error)
 	UpdateKabKota(context.Context, *KabKota) (*GetKabKotaResponse, error)
@@ -106,8 +119,11 @@ type KabKotaServiceServer interface {
 type UnimplementedKabKotaServiceServer struct {
 }
 
-func (UnimplementedKabKotaServiceServer) GetAllKabKota(context.Context, *GetAllKabKotaRequest) (*GetAllKabKotaResponse, error) {
+func (UnimplementedKabKotaServiceServer) GetAllKabKota(context.Context, *emptypb.Empty) (*GetAllKabKotaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllKabKota not implemented")
+}
+func (UnimplementedKabKotaServiceServer) GetKabKotaByProvinsi(context.Context, *GetKabKotaByIdWilRequest) (*GetAllKabKotaResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetKabKotaByProvinsi not implemented")
 }
 func (UnimplementedKabKotaServiceServer) GetKabKotaByIdWil(context.Context, *GetKabKotaByIdWilRequest) (*GetKabKotaResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetKabKotaByIdWil not implemented")
@@ -135,7 +151,7 @@ func RegisterKabKotaServiceServer(s grpc.ServiceRegistrar, srv KabKotaServiceSer
 }
 
 func _KabKotaService_GetAllKabKota_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllKabKotaRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -147,7 +163,25 @@ func _KabKotaService_GetAllKabKota_Handler(srv interface{}, ctx context.Context,
 		FullMethod: KabKotaService_GetAllKabKota_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(KabKotaServiceServer).GetAllKabKota(ctx, req.(*GetAllKabKotaRequest))
+		return srv.(KabKotaServiceServer).GetAllKabKota(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _KabKotaService_GetKabKotaByProvinsi_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetKabKotaByIdWilRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(KabKotaServiceServer).GetKabKotaByProvinsi(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: KabKotaService_GetKabKotaByProvinsi_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(KabKotaServiceServer).GetKabKotaByProvinsi(ctx, req.(*GetKabKotaByIdWilRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -234,6 +268,10 @@ var KabKotaService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllKabKota",
 			Handler:    _KabKotaService_GetAllKabKota_Handler,
+		},
+		{
+			MethodName: "GetKabKotaByProvinsi",
+			Handler:    _KabKotaService_GetKabKotaByProvinsi_Handler,
 		},
 		{
 			MethodName: "GetKabKotaByIdWil",

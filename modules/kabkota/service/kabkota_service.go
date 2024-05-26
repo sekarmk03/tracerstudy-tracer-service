@@ -19,6 +19,7 @@ type KabKotaService struct {
 type KabKotaServiceUseCase interface {
 	FindAll(ctx context.Context, page, limit uint32) ([]*entity.KabKota, int64, error)
 	FindByIdWil(ctx context.Context, idWil string) (*entity.KabKota, error)
+	FindByIdIndukWil(ctx context.Context, idIndukWil string) ([]*entity.KabKota, error)
 	Create(ctx context.Context, idWil, nama, idIndukWil string) (*entity.KabKota, error)
 	Update(ctx context.Context, idWil string, fields *entity.KabKota) (*entity.KabKota, error)
 	Delete(ctx context.Context, idWil string) error
@@ -48,6 +49,17 @@ func (svc *KabKotaService) FindByIdWil(ctx context.Context, idWil string) (*enti
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [KabKotaService - FindByIdWil] Error while find KabKota by IdWil:", parseError.Message)
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (svc *KabKotaService) FindByIdIndukWil(ctx context.Context, idIndukWil string) ([]*entity.KabKota, error) {
+	res, err := svc.kabkotaRepository.FindByIdIndukWil(ctx, idIndukWil)
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [KabKotaService - FindByIdIndukWil] Error while find KabKota by IdIndukWil:", parseError.Message)
 		return nil, err
 	}
 

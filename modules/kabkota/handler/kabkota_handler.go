@@ -30,11 +30,11 @@ func NewKabKotaHandler(config config.Config, kabkotaService service.KabKotaServi
 
 func (kh *KabKotaHandler) GetAllKabKota(ctx context.Context, req *pb.GetAllKabKotaRequest) (*pb.GetAllKabKotaResponse, error) {
 	if req == nil || req.Pagination == nil {
-        return &pb.GetAllKabKotaResponse{
+		return &pb.GetAllKabKotaResponse{
 			Code:    uint32(http.StatusBadRequest),
 			Message: "request cannot be nil",
 		}, status.Errorf(codes.InvalidArgument, "request cannot be nil")
-    }
+	}
 
 	kabkota, totalRows, err := kh.kabkotaSvc.FindAll(ctx, req.Pagination.Page, req.Pagination.Limit)
 	if err != nil {
@@ -67,6 +67,31 @@ func (kh *KabKotaHandler) GetAllKabKota(ctx context.Context, req *pb.GetAllKabKo
 		Message:    "get all kabkota success",
 		Pagination: pagination,
 		Data:       kabkotaArr,
+	}, nil
+}
+
+func (kh *KabKotaHandler) GetKabKotaByProvinsi(ctx context.Context, req *pb.GetKabKotaByIdWilRequest) (*pb.GetKabKotaResponseNoPg, error) {
+	kabkota, err := kh.kabkotaSvc.FindByIdIndukWil(ctx, req.GetIdWil())
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [KabKotaHandler - GetKabKotaByIdIndukWil] Internal server error:", parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetKabKotaResponseNoPg{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	var kabkotaArr []*pb.KabKota
+	for _, k := range kabkota {
+		kabkotaProto := entity.ConvertEntityToProto(k)
+		kabkotaArr = append(kabkotaArr, kabkotaProto)
+	}
+
+	return &pb.GetKabKotaResponseNoPg{
+		Code:    uint32(http.StatusOK),
+		Message: "get all kabkota success",
+		Data:    kabkotaArr,
 	}, nil
 }
 

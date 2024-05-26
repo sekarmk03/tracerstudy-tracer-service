@@ -4,28 +4,21 @@ package tracer_study_grpc;
 option go_package = "./;pb";
 
 import "google/protobuf/timestamp.proto";
-import "provinsi.proto";
-import "pagination.proto";
+import "google/protobuf/empty.proto";
 
 message KabKota {
     uint32 id = 1;
     string id_wil = 2;
     string nama = 3;
     string id_induk_wil = 4;
-    Provinsi provinsi = 5;
-    google.protobuf.Timestamp created_at = 6;
-    google.protobuf.Timestamp updated_at = 7;
-}
-
-message GetAllKabKotaRequest {
-    general.PaginationRequest pagination = 1;
+    google.protobuf.Timestamp created_at = 5;
+    google.protobuf.Timestamp updated_at = 6;
 }
 
 message GetAllKabKotaResponse {
     uint32 code = 1;
     string message = 2;
-    general.Pagination pagination = 3;
-    repeated KabKota data = 4;
+    repeated KabKota data = 3;
 }
 
 message GetKabKotaByIdWilRequest {
@@ -44,7 +37,8 @@ message DeleteKabKotaResponse {
 }
 
 service KabKotaService {
-    rpc GetAllKabKota(GetAllKabKotaRequest) returns (GetAllKabKotaResponse) {};
+    rpc GetAllKabKota(google.protobuf.Empty) returns (GetAllKabKotaResponse) {};
+    rpc GetKabKotaByProvinsi(GetKabKotaByIdWilRequest) returns (GetAllKabKotaResponse) {};
     rpc GetKabKotaByIdWil(GetKabKotaByIdWilRequest) returns (GetKabKotaResponse) {};
     rpc CreateKabKota(KabKota) returns (GetKabKotaResponse) {};
     rpc UpdateKabKota(KabKota) returns (GetKabKotaResponse) {};

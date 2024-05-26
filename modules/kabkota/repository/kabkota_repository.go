@@ -27,6 +27,7 @@ func NewKabKotaRepository(db *gorm.DB) *KabKotaRepository {
 type KabKotaRepositoryUseCase interface {
 	FindAll(ctx context.Context, limit, offset int) ([]*kkentity.KabKota, int64, error)
 	FindByIdWil(ctx context.Context, idWil string) (*kkentity.KabKota, error)
+	FindByIdIndukWil(ctx context.Context, idIndukWil string) ([]*kkentity.KabKota, error)
 	Create(ctx context.Context, req *kkentity.KabKota) (*kkentity.KabKota, error)
 	Update(ctx context.Context, kabkota *kkentity.KabKota, updatedFields map[string]interface{}) (*kkentity.KabKota, error)
 	Delete(ctx context.Context, idWil string) error
@@ -63,6 +64,19 @@ func (k *KabKotaRepository) FindAll(ctx context.Context, limit, offset int) ([]*
 	}
 
 	return kabkota, totalRecords, nil
+}
+
+func (k *KabKotaRepository) FindByIdIndukWil(ctx context.Context, idIndukWil string) ([]*kkentity.KabKota, error) {
+	ctxSpan, span := trace.StartSpan(ctx, "KabKotaRepository - FindByIdIndukWil")
+	defer span.End()
+
+	var kabkota []*kkentity.KabKota
+	if err := k.db.Debug().WithContext(ctxSpan).Where("id_induk_wil = ?", idIndukWil).Find(&kabkota).Error; err != nil {
+		log.Println("ERROR: [KabKotaRepository - FindByIdIndukWil] Internal server error:", err)
+		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
+	}
+
+	return kabkota, nil
 }
 
 func (k *KabKotaRepository) FindByIdWil(ctx context.Context, idWil string) (*kkentity.KabKota, error) {
