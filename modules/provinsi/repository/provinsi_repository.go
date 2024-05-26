@@ -24,14 +24,14 @@ func NewProvinsiRepository(db *gorm.DB) *ProvinsiRepository {
 }
 
 type ProvinsiRepositoryUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.Provinsi, error)
+	FindAll(ctx context.Context) ([]*entity.Provinsi, error)
 	FindByIdWil(ctx context.Context, idWil string) (*entity.Provinsi, error)
 	Create(ctx context.Context, req *entity.Provinsi) (*entity.Provinsi, error)
 	Update(ctx context.Context, provinsi *entity.Provinsi, updatedFields map[string]interface{}) (*entity.Provinsi, error)
 	Delete(ctx context.Context, idWil string) error
 }
 
-func (p *ProvinsiRepository) FindAll(ctx context.Context, req any) ([]*entity.Provinsi, error) {
+func (p *ProvinsiRepository) FindAll(ctx context.Context) ([]*entity.Provinsi, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "ProvinsiRepository - FindAll")
 	defer span.End()
 

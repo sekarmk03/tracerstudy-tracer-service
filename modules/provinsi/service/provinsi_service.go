@@ -17,7 +17,7 @@ type ProvinsiService struct {
 }
 
 type ProvinsiServiceUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.Provinsi, error)
+	FindAll(ctx context.Context) ([]*entity.Provinsi, error)
 	FindByIdWil(ctx context.Context, idWil string) (*entity.Provinsi, error)
 	Create(ctx context.Context, idWil, nama string, ump uint64) (*entity.Provinsi, error)
 	Update(ctx context.Context, idWil string, fields *entity.Provinsi) (*entity.Provinsi, error)
@@ -31,8 +31,8 @@ func NewProvinsiService(cfg config.Config, provinsiRepository repository.Provins
 	}
 }
 
-func (svc *ProvinsiService) FindAll(ctx context.Context, req any) ([]*entity.Provinsi, error) {
-	res, err := svc.provinsiRepository.FindAll(ctx, req)
+func (svc *ProvinsiService) FindAll(ctx context.Context) ([]*entity.Provinsi, error) {
+	res, err := svc.provinsiRepository.FindAll(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [ProvinsiService - FindAll] Error while find all provinsi: ", parseError.Message)

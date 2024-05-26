@@ -29,7 +29,7 @@ func NewProvinsiHandler(config config.Config, provinsiService service.ProvinsiSe
 }
 
 func (ph *ProvinsiHandler) GetAllProvinsi(ctx context.Context, req *emptypb.Empty) (*pb.GetAllProvinsiResponse, error) {
-	provinsi, err := ph.provinsiSvc.FindAll(ctx, req)
+	provinsi, err := ph.provinsiSvc.FindAll(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [ProvinsiHandler - GetAllProvinsi] Error while get all provinsi: ", parseError.Message)
