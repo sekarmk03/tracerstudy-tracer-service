@@ -16,7 +16,8 @@ type ProdiService struct {
 }
 
 type ProdiServiceUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.Prodi, error)
+	FindAll(ctx context.Context) ([]*entity.Prodi, error)
+	FindAllFakultas(ctx context.Context) ([]*entity.Fakultas, error)
 	FindProdiByKode(ctx context.Context, kode string) (*entity.Prodi, error)
 	Create(ctx context.Context, kode, kodeDikti, kodeFakultas, kodeIntegrasi, nama, jenjang, namaFakultas, akronimFakultas string) (*entity.Prodi, error)
 	Update(ctx context.Context, kode string, fields *entity.Prodi) (*entity.Prodi, error)
@@ -30,10 +31,20 @@ func NewProdiService(cfg config.Config, prodiRepository repository.ProdiReposito
 	}
 }
 
-func (svc *ProdiService) FindAll(ctx context.Context, req any) ([]*entity.Prodi, error) {
-	res, err := svc.prodiRepository.FindAll(ctx, req)
+func (svc *ProdiService) FindAll(ctx context.Context) ([]*entity.Prodi, error) {
+	res, err := svc.prodiRepository.FindAll(ctx)
 	if err != nil {
 		log.Println("ERROR: [ProdiService - FindAll] Error while find all prodi: ", err)
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (svc *ProdiService) FindAllFakultas(ctx context.Context) ([]*entity.Fakultas, error) {
+	res, err := svc.prodiRepository.FindAllFakultas(ctx)
+	if err != nil {
+		log.Println("ERROR: [ProdiService - FindAllFakultas] Error while find all fakultas: ", err)
 		return nil, err
 	}
 

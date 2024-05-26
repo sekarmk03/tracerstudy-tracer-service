@@ -20,10 +20,22 @@ message Prodi {
     google.protobuf.Timestamp updated_at = 11;
 }
 
+message Fakultas {
+    string kode = 1;
+    string nama = 2;
+    string akronim = 3;
+}
+
 message GetAllProdiResponse {
     uint32 code = 1;
     string message = 2;
     repeated Prodi data = 3;
+}
+
+message GetAllFakultasResponse {
+    uint32 code = 1;
+    string message = 2;
+    repeated Fakultas data = 3;
 }
 
 message GetProdiByKodeRequest {
@@ -43,6 +55,7 @@ message DeleteProdiResponse {
 
 service ProdiService {
     rpc GetAllProdi(google.protobuf.Empty) returns (GetAllProdiResponse) {};
+    rpc GetAllFakultas(google.protobuf.Empty) returns (GetAllFakultasResponse) {};
     rpc GetProdiByKode(GetProdiByKodeRequest) returns (GetProdiResponse) {};
     rpc CreateProdi(Prodi) returns (GetProdiResponse) {};
     rpc UpdateProdi(Prodi) returns (GetProdiResponse) {};

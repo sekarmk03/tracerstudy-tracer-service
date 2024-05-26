@@ -30,7 +30,7 @@ func NewProdiHandler(config config.Config, prodiService service.ProdiServiceUseC
 }
 
 func (ph *ProdiHandler) GetAllProdi(ctx context.Context, req *emptypb.Empty) (*pb.GetAllProdiResponse, error) {
-	prodi, err := ph.prodiSvc.FindAll(ctx, req)
+	prodi, err := ph.prodiSvc.FindAll(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [ProdiHandler - GetAllProdi] Internal server error:", parseError.Message)
@@ -52,6 +52,32 @@ func (ph *ProdiHandler) GetAllProdi(ctx context.Context, req *emptypb.Empty) (*p
 		Code:    uint32(http.StatusOK),
 		Message: "get all prodi success",
 		Data:    prodiArr,
+	}, nil
+}
+
+func (ph *ProdiHandler) GetAllFakultas(ctx context.Context, req *emptypb.Empty) (*pb.GetAllFakultasResponse, error) {
+	fakultas, err := ph.prodiSvc.FindAllFakultas(ctx)
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [ProdiHandler - GetAllFakultas] Internal server error:", parseError.Message)
+		// return nil, status.Errorf(parseError.Code, parseError.Message)
+		return &pb.GetAllFakultasResponse{
+			Code:    uint32(http.StatusInternalServerError),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	var fakultasArr []*pb.Fakultas
+	for _, f := range fakultas {
+		// convert each f to pb.Fakultas
+		fakultasProto := entity.ConvertEntityFakultasToProto(f)
+		fakultasArr = append(fakultasArr, fakultasProto)
+	}
+
+	return &pb.GetAllFakultasResponse{
+		Code:    uint32(http.StatusOK),
+		Message: "get all fakultas success",
+		Data:    fakultasArr,
 	}, nil
 }
 

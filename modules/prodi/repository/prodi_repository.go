@@ -5,7 +5,6 @@ import (
 	"errors"
 	"log"
 	"time"
-	fentity "tracerstudy-tracer-service/modules/fakultas/entity"
 	"tracerstudy-tracer-service/modules/prodi/entity"
 
 	"go.opencensus.io/trace"
@@ -25,15 +24,15 @@ func NewProdiRepository(db *gorm.DB) *ProdiRepository {
 }
 
 type ProdiRepositoryUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.Prodi, error)
-	FindAllFakultas(ctx context.Context, req any) ([]*fentity.Fakultas, error)
+	FindAll(ctx context.Context) ([]*entity.Prodi, error)
+	FindAllFakultas(ctx context.Context) ([]*entity.Fakultas, error)
 	FindProdiByKode(ctx context.Context, kodeProdi string) (*entity.Prodi, error)
 	Create(ctx context.Context, req *entity.Prodi) (*entity.Prodi, error)
 	Update(ctx context.Context, prodi *entity.Prodi, updatedFields map[string]interface{}) (*entity.Prodi, error)
 	Delete(ctx context.Context, kodeProdi string) error
 }
 
-func (p *ProdiRepository) FindAll(ctx context.Context, req any) ([]*entity.Prodi, error) {
+func (p *ProdiRepository) FindAll(ctx context.Context) ([]*entity.Prodi, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "ProdiRepository - FindAll")
 	defer span.End()
 
@@ -46,11 +45,11 @@ func (p *ProdiRepository) FindAll(ctx context.Context, req any) ([]*entity.Prodi
 	return prodi, nil
 }
 
-func (p *ProdiRepository) FindAllFakultas(ctx context.Context, req any) ([]*fentity.Fakultas, error) {
+func (p *ProdiRepository) FindAllFakultas(ctx context.Context) ([]*entity.Fakultas, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "ProdiRepository - FindAllFakultas")
 	defer span.End()
 
-	var fakultas []*fentity.Fakultas
+	var fakultas []*entity.Fakultas
 	if err := p.db.Debug().WithContext(ctxSpan).Select("DISTINCT kode_fakultas AS kode, nama_fakultas AS nama, akronim_fakultas AS akronim").Find(&fakultas).Error; err != nil {
 		log.Println("ERROR: [ProdiRepository - FindAllFakultas] Internal server error:", err)
 		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)

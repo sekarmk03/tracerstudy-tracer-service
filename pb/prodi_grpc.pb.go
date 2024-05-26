@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	ProdiService_GetAllProdi_FullMethodName    = "/tracer_study_grpc.ProdiService/GetAllProdi"
+	ProdiService_GetAllFakultas_FullMethodName = "/tracer_study_grpc.ProdiService/GetAllFakultas"
 	ProdiService_GetProdiByKode_FullMethodName = "/tracer_study_grpc.ProdiService/GetProdiByKode"
 	ProdiService_CreateProdi_FullMethodName    = "/tracer_study_grpc.ProdiService/CreateProdi"
 	ProdiService_UpdateProdi_FullMethodName    = "/tracer_study_grpc.ProdiService/UpdateProdi"
@@ -32,6 +33,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProdiServiceClient interface {
 	GetAllProdi(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllProdiResponse, error)
+	GetAllFakultas(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllFakultasResponse, error)
 	GetProdiByKode(ctx context.Context, in *GetProdiByKodeRequest, opts ...grpc.CallOption) (*GetProdiResponse, error)
 	CreateProdi(ctx context.Context, in *Prodi, opts ...grpc.CallOption) (*GetProdiResponse, error)
 	UpdateProdi(ctx context.Context, in *Prodi, opts ...grpc.CallOption) (*GetProdiResponse, error)
@@ -49,6 +51,15 @@ func NewProdiServiceClient(cc grpc.ClientConnInterface) ProdiServiceClient {
 func (c *prodiServiceClient) GetAllProdi(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllProdiResponse, error) {
 	out := new(GetAllProdiResponse)
 	err := c.cc.Invoke(ctx, ProdiService_GetAllProdi_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *prodiServiceClient) GetAllFakultas(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllFakultasResponse, error) {
+	out := new(GetAllFakultasResponse)
+	err := c.cc.Invoke(ctx, ProdiService_GetAllFakultas_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -96,6 +107,7 @@ func (c *prodiServiceClient) DeleteProdi(ctx context.Context, in *GetProdiByKode
 // for forward compatibility
 type ProdiServiceServer interface {
 	GetAllProdi(context.Context, *emptypb.Empty) (*GetAllProdiResponse, error)
+	GetAllFakultas(context.Context, *emptypb.Empty) (*GetAllFakultasResponse, error)
 	GetProdiByKode(context.Context, *GetProdiByKodeRequest) (*GetProdiResponse, error)
 	CreateProdi(context.Context, *Prodi) (*GetProdiResponse, error)
 	UpdateProdi(context.Context, *Prodi) (*GetProdiResponse, error)
@@ -109,6 +121,9 @@ type UnimplementedProdiServiceServer struct {
 
 func (UnimplementedProdiServiceServer) GetAllProdi(context.Context, *emptypb.Empty) (*GetAllProdiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllProdi not implemented")
+}
+func (UnimplementedProdiServiceServer) GetAllFakultas(context.Context, *emptypb.Empty) (*GetAllFakultasResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllFakultas not implemented")
 }
 func (UnimplementedProdiServiceServer) GetProdiByKode(context.Context, *GetProdiByKodeRequest) (*GetProdiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProdiByKode not implemented")
@@ -149,6 +164,24 @@ func _ProdiService_GetAllProdi_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProdiServiceServer).GetAllProdi(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProdiService_GetAllFakultas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProdiServiceServer).GetAllFakultas(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProdiService_GetAllFakultas_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProdiServiceServer).GetAllFakultas(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -235,6 +268,10 @@ var ProdiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllProdi",
 			Handler:    _ProdiService_GetAllProdi_Handler,
+		},
+		{
+			MethodName: "GetAllFakultas",
+			Handler:    _ProdiService_GetAllFakultas_Handler,
 		},
 		{
 			MethodName: "GetProdiByKode",

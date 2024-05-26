@@ -9,7 +9,6 @@ import (
 	"tracerstudy-tracer-service/common/mysql"
 	"tracerstudy-tracer-service/server"
 
-	fakultasModule "tracerstudy-tracer-service/modules/fakultas"
 	kabkotaModule "tracerstudy-tracer-service/modules/kabkota"
 	mhsbiodataapiModule "tracerstudy-tracer-service/modules/mhsbiodataapi"
 	pktsModule "tracerstudy-tracer-service/modules/pkts"
@@ -58,7 +57,6 @@ func registerGrpcHandlers(server *grpc.Server, cfg config.Config, db *gorm.DB, /
 	respondenModule.InitGrpc(server, cfg, db, grpcConn)
 	pktsModule.InitGrpc(server, cfg, db, grpcConn)
 	userstudyModule.InitGrpc(server, cfg, db, grpcConn)
-	fakultasModule.InitGrpc(server, cfg, db, grpcConn)
 }
 
 // func createRestServer(port string) *server.Rest {
