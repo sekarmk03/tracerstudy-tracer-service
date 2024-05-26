@@ -19,21 +19,21 @@ import (
 
 type RespondenHandler struct {
 	pb.UnimplementedRespondenServiceServer
-	config        config.Config
-	respondenSvc  resSvc.RespondenServiceUseCase
+	config           config.Config
+	respondenSvc     resSvc.RespondenServiceUseCase
 	mhsbiodataapiSvc mhsbSvc.MhsBiodataApiServiceUseCase
 }
 
 func NewRespondenHandler(config config.Config, respondenService resSvc.RespondenServiceUseCase, mhsbiodataapiService mhsbSvc.MhsBiodataApiServiceUseCase) *RespondenHandler {
 	return &RespondenHandler{
-		config:        config,
-		respondenSvc:  respondenService,
+		config:           config,
+		respondenSvc:     respondenService,
 		mhsbiodataapiSvc: mhsbiodataapiService,
 	}
 }
 
 func (rh *RespondenHandler) GetAllResponden(ctx context.Context, req *emptypb.Empty) (*pb.GetAllRespondenResponse, error) {
-	responden, err := rh.respondenSvc.FindAll(ctx, req)
+	responden, err := rh.respondenSvc.FindAll(ctx)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - GetAllResponden] Error while get all responden:", parseError.Message)

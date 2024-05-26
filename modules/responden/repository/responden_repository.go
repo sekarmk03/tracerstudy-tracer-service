@@ -24,14 +24,14 @@ func NewRespondenRepository(db *gorm.DB) *RespondenRepository {
 }
 
 type RespondenRepositoryUseCase interface {
-	FindAll(ctx context.Context, req any) ([]*entity.Responden, error)
+	FindAll(ctx context.Context) ([]*entity.Responden, error)
 	FindByNim(ctx context.Context, nim string) (*entity.Responden, error)
 	Update(ctx context.Context, responden *entity.Responden, updatedFields map[string]interface{}) (*entity.Responden, error)
 	Create(ctx context.Context, req *entity.Responden) (*entity.Responden, error)
 	FindByNimList(ctx context.Context, nimList []string) ([]*entity.Responden, error)
 }
 
-func (r *RespondenRepository) FindAll(ctx context.Context, req any) ([]*entity.Responden, error) {
+func (r *RespondenRepository) FindAll(ctx context.Context) ([]*entity.Responden, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "RespondenRepository - FindAll")
 	defer span.End()
 
