@@ -3,7 +3,6 @@ syntax = "proto3";
 package tracer_study_grpc;
 option go_package = "./;pb";
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 message Responden {
@@ -25,9 +24,9 @@ message Responden {
     string tanggal_wisuda = 16;
     string nik = 17;
     string npwp = 18;
-    google.protobuf.Timestamp created_at = 19;
-    google.protobuf.Timestamp updated_at = 20;
-    google.protobuf.Timestamp deleted_at = 21;
+    string created_at = 19;
+    string updated_at = 20;
+    string deleted_at = 21;
 }
 
 message GetAllRespondenResponse {

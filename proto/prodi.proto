@@ -3,7 +3,6 @@ syntax = "proto3";
 package tracer_study_grpc;
 option go_package = "./;pb";
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 message Prodi {
@@ -16,8 +15,8 @@ message Prodi {
     string kode_fakultas = 7;
     string nama_fakultas = 8;
     string akronim_fakultas = 9;
-    google.protobuf.Timestamp created_at = 10;
-    google.protobuf.Timestamp updated_at = 11;
+    string created_at = 10;
+    string updated_at = 11;
 }
 
 message Fakultas {

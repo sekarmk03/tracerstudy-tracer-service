@@ -3,8 +3,6 @@ package entity
 import (
 	"time"
 	"tracerstudy-tracer-service/pb"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -41,7 +39,7 @@ func ConvertEntityToProto(k *KabKota) *pb.KabKota {
 		IdWil:      k.IdWil,
 		Nama:       k.Nama,
 		IdIndukWil: k.IdIndukWil,
-		CreatedAt:  timestamppb.New(k.CreatedAt),
-		UpdatedAt:  timestamppb.New(k.UpdatedAt),
+		CreatedAt:  k.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:  k.UpdatedAt.Format(time.RFC3339),
 	}
 }

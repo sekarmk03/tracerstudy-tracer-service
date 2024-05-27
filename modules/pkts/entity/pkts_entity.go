@@ -4,7 +4,6 @@ import (
 	"time"
 	"tracerstudy-tracer-service/pb"
 
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
 
@@ -201,8 +200,8 @@ func ConvertEntityToProto(p *PKTS) *pb.PKTS {
 		EmailAtasan:         p.EmailAtasan,
 		TinggalSelamaKuliah: p.TinggalSelamaKuliah,
 		Code:                p.Code,
-		MailSent:            timestamppb.New(p.MailSent),
-		CreatedAt:           timestamppb.New(p.CreatedAt),
-		UpdatedAt:           timestamppb.New(p.UpdatedAt),
+		MailSent:            p.MailSent.Format(time.RFC3339),
+		CreatedAt:           p.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:           p.UpdatedAt.Format(time.RFC3339),
 	}
 }

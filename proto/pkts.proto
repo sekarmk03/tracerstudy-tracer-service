@@ -3,7 +3,6 @@ syntax = "proto3";
 package tracer_study_grpc;
 option go_package = "./;pb";
 
-import "google/protobuf/timestamp.proto";
 import "pagination.proto";
 
 message PKTS {
@@ -95,10 +94,10 @@ message PKTS {
     string email_atasan = 86;
     string tinggal_selama_kuliah = 87;
     string code = 88;
-    google.protobuf.Timestamp mail_sent = 89;
-    google.protobuf.Timestamp created_at = 90;
-    google.protobuf.Timestamp updated_at = 91;
-    google.protobuf.Timestamp deleted_at = 92;
+    string mail_sent = 89;
+    string created_at = 90;
+    string updated_at = 91;
+    string deleted_at = 92;
 }
 
 message PKTSRekapByProdi {
@@ -113,8 +112,8 @@ message PKTSRekapByProdi {
     string prov_kerja = 9;
     string ump_pkts = 10;
     string penghasilan = 11;
-    google.protobuf.Timestamp input_pkts = 12;
-    google.protobuf.Timestamp update_pkts = 13;
+    string input_pkts = 12;
+    string update_pkts = 13;
 }
 
 message PKTSRekapByYear {

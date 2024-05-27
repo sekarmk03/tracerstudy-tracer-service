@@ -3,7 +3,6 @@ syntax = "proto3";
 package tracer_study_grpc;
 option go_package = "./;pb";
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 
 message KabKota {
@@ -11,8 +10,8 @@ message KabKota {
     string id_wil = 2;
     string nama = 3;
     string id_induk_wil = 4;
-    google.protobuf.Timestamp created_at = 5;
-    google.protobuf.Timestamp updated_at = 6;
+    string created_at = 5;
+    string updated_at = 6;
 }
 
 message GetAllKabKotaResponse {

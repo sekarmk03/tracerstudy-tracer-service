@@ -3,7 +3,6 @@ syntax = "proto3";
 package tracer_study_grpc;
 option go_package = "./;pb";
 
-import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "responden.proto";
 import "pagination.proto";
@@ -33,9 +32,9 @@ message UserStudy {
     string kelemahan_lulusan = 22;
     string saran_peningkatan_kompetensi_lulusan = 23;
     string saran_perbaikan_kurikulum = 24;
-    google.protobuf.Timestamp created_at = 27;
-    google.protobuf.Timestamp updated_at = 28;
-    google.protobuf.Timestamp deleted_at = 29;
+    string created_at = 27;
+    string updated_at = 28;
+    string deleted_at = 29;
 }
 
 message SingleUserStudyResponse {

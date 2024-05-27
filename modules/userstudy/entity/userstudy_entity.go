@@ -5,7 +5,6 @@ import (
 
 	"tracerstudy-tracer-service/pb"
 
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"gorm.io/gorm"
 )
 
@@ -104,7 +103,7 @@ func ConvertEntityToProto(us *UserStudy) *pb.UserStudy {
 		KelemahanLulusan:                  us.KelemahanLulusan,
 		SaranPeningkatanKompetensiLulusan: us.SaranPeningkatanKompetensiLulusan,
 		SaranPerbaikanKurikulum:           us.SaranPerbaikanKurikulum,
-		CreatedAt:                         timestamppb.New(us.CreatedAt),
-		UpdatedAt:                         timestamppb.New(us.UpdatedAt),
+		CreatedAt:                         us.CreatedAt.Format(time.RFC3339),
+		UpdatedAt:                         us.UpdatedAt.Format(time.RFC3339),
 	}
 }

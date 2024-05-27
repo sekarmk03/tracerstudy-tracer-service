@@ -3,8 +3,6 @@ package entity
 import (
 	"time"
 	"tracerstudy-tracer-service/pb"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type PKTSRekapByProdi struct {
@@ -36,8 +34,8 @@ func ConvertEntityPKTSRekapByProdiToProto(p *PKTSRekapByProdi) *pb.PKTSRekapByPr
 		ProvKerja:     p.ProvKerja,
 		UmpPkts:       p.UmpPkts,
 		Penghasilan:   p.Penghasilan,
-		InputPkts:     timestamppb.New(p.InputPkts),
-		UpdatePkts:    timestamppb.New(p.UpdatePkts),
+		InputPkts:     p.InputPkts.Format(time.RFC3339),
+		UpdatePkts:    p.UpdatePkts.Format(time.RFC3339),
 	}
 }
 
