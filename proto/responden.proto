@@ -3,7 +3,7 @@ syntax = "proto3";
 package tracer_study_grpc;
 option go_package = "./;pb";
 
-import "google/protobuf/empty.proto";
+import "pagination.proto";
 
 message Responden {
     uint32 id = 1;
@@ -29,10 +29,15 @@ message Responden {
     string deleted_at = 21;
 }
 
+message GetAllRespondenRequest {
+    general.PaginationRequest pagination = 1;
+}
+
 message GetAllRespondenResponse {
     uint32 code = 1;
     string message = 2;
-    repeated Responden data = 3;
+    general.Pagination pagination = 3;
+    repeated Responden data = 4;
 }
 
 message GetRespondenByNimRequest {
@@ -85,7 +90,7 @@ message GetRespondenByNimListRequest {
 }
 
 service RespondenService {
-    rpc GetAllResponden(google.protobuf.Empty) returns (GetAllRespondenResponse) {};
+    rpc GetAllResponden(GetAllRespondenRequest) returns (GetAllRespondenResponse) {};
     rpc GetRespondenByNim(GetRespondenByNimRequest) returns (GetRespondenByNimResponse) {};
     rpc UpdateRespondenFromSiak(UpdateRespondenFromSiakRequest) returns (UpdateRespondenResponse) {};
     rpc CreateResponden(CreateRespondenRequest) returns (CreateRespondenResponse) {};

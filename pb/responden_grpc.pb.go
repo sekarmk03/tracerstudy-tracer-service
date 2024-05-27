@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -32,7 +31,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RespondenServiceClient interface {
-	GetAllResponden(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllRespondenResponse, error)
+	GetAllResponden(ctx context.Context, in *GetAllRespondenRequest, opts ...grpc.CallOption) (*GetAllRespondenResponse, error)
 	GetRespondenByNim(ctx context.Context, in *GetRespondenByNimRequest, opts ...grpc.CallOption) (*GetRespondenByNimResponse, error)
 	UpdateRespondenFromSiak(ctx context.Context, in *UpdateRespondenFromSiakRequest, opts ...grpc.CallOption) (*UpdateRespondenResponse, error)
 	CreateResponden(ctx context.Context, in *CreateRespondenRequest, opts ...grpc.CallOption) (*CreateRespondenResponse, error)
@@ -48,7 +47,7 @@ func NewRespondenServiceClient(cc grpc.ClientConnInterface) RespondenServiceClie
 	return &respondenServiceClient{cc}
 }
 
-func (c *respondenServiceClient) GetAllResponden(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllRespondenResponse, error) {
+func (c *respondenServiceClient) GetAllResponden(ctx context.Context, in *GetAllRespondenRequest, opts ...grpc.CallOption) (*GetAllRespondenResponse, error) {
 	out := new(GetAllRespondenResponse)
 	err := c.cc.Invoke(ctx, RespondenService_GetAllResponden_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -106,7 +105,7 @@ func (c *respondenServiceClient) GetRespondenByNimList(ctx context.Context, in *
 // All implementations must embed UnimplementedRespondenServiceServer
 // for forward compatibility
 type RespondenServiceServer interface {
-	GetAllResponden(context.Context, *emptypb.Empty) (*GetAllRespondenResponse, error)
+	GetAllResponden(context.Context, *GetAllRespondenRequest) (*GetAllRespondenResponse, error)
 	GetRespondenByNim(context.Context, *GetRespondenByNimRequest) (*GetRespondenByNimResponse, error)
 	UpdateRespondenFromSiak(context.Context, *UpdateRespondenFromSiakRequest) (*UpdateRespondenResponse, error)
 	CreateResponden(context.Context, *CreateRespondenRequest) (*CreateRespondenResponse, error)
@@ -119,7 +118,7 @@ type RespondenServiceServer interface {
 type UnimplementedRespondenServiceServer struct {
 }
 
-func (UnimplementedRespondenServiceServer) GetAllResponden(context.Context, *emptypb.Empty) (*GetAllRespondenResponse, error) {
+func (UnimplementedRespondenServiceServer) GetAllResponden(context.Context, *GetAllRespondenRequest) (*GetAllRespondenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllResponden not implemented")
 }
 func (UnimplementedRespondenServiceServer) GetRespondenByNim(context.Context, *GetRespondenByNimRequest) (*GetRespondenByNimResponse, error) {
@@ -151,7 +150,7 @@ func RegisterRespondenServiceServer(s grpc.ServiceRegistrar, srv RespondenServic
 }
 
 func _RespondenService_GetAllResponden_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(emptypb.Empty)
+	in := new(GetAllRespondenRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -163,7 +162,7 @@ func _RespondenService_GetAllResponden_Handler(srv interface{}, ctx context.Cont
 		FullMethod: RespondenService_GetAllResponden_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RespondenServiceServer).GetAllResponden(ctx, req.(*emptypb.Empty))
+		return srv.(RespondenServiceServer).GetAllResponden(ctx, req.(*GetAllRespondenRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
