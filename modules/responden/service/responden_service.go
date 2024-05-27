@@ -17,7 +17,7 @@ type RespondenService struct {
 }
 
 type RespondenServiceUseCase interface {
-	FindAll(ctx context.Context) ([]*entity.Responden, error)
+	FindAll(ctx context.Context, limit, page uint32) ([]*entity.Responden, int64, error)
 	FindByNim(ctx context.Context, nim string) (*entity.Responden, error)
 	Update(ctx context.Context, nim string, fields *entity.Responden) (*entity.Responden, error)
 	Create(ctx context.Context, nim string) (*entity.Responden, error)
@@ -31,15 +31,17 @@ func NewRespondenService(cfg config.Config, respondenRepository repository.Respo
 	}
 }
 
-func (svc *RespondenService) FindAll(ctx context.Context) ([]*entity.Responden, error) {
-	res, err := svc.respondenRepository.FindAll(ctx)
+func (svc *RespondenService) FindAll(ctx context.Context, limit, page uint32) ([]*entity.Responden, int64, error) {
+	offset := (page - 1) * limit
+
+	res, totalRecords, err := svc.respondenRepository.FindAll(ctx, int(limit), int(offset))
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenService - FindAll] Error while find all responden:", parseError.Message)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return res, nil
+	return res, totalRecords, nil
 }
 
 func (svc *RespondenService) FindByNim(ctx context.Context, nim string) (*entity.Responden, error) {

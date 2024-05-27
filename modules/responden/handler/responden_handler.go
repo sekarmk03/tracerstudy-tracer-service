@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"log"
+	"math"
 	"net/http"
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
@@ -14,7 +15,6 @@ import (
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type RespondenHandler struct {
@@ -32,8 +32,8 @@ func NewRespondenHandler(config config.Config, respondenService resSvc.Responden
 	}
 }
 
-func (rh *RespondenHandler) GetAllResponden(ctx context.Context, req *emptypb.Empty) (*pb.GetAllRespondenResponse, error) {
-	responden, err := rh.respondenSvc.FindAll(ctx)
+func (rh *RespondenHandler) GetAllResponden(ctx context.Context, req *pb.GetAllRespondenRequest) (*pb.GetAllRespondenResponse, error) {
+	responden, totalRecords, err := rh.respondenSvc.FindAll(ctx, req.Pagination.Limit, req.Pagination.Page)
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - GetAllResponden] Error while get all responden:", parseError.Message)
@@ -50,10 +50,20 @@ func (rh *RespondenHandler) GetAllResponden(ctx context.Context, req *emptypb.Em
 		respondenArr = append(respondenArr, respondenProto)
 	}
 
+	totalPages := uint32(math.Ceil(float64(totalRecords) / float64(req.Pagination.Limit)))
+
+	pagination := &pb.Pagination{
+		TotalRows:   uint32(totalRecords),
+		TotalPages:  totalPages,
+		CurrentPage: req.Pagination.Page,
+		CurrentRows: uint32(len(respondenArr)),
+	}
+
 	return &pb.GetAllRespondenResponse{
-		Code:    uint32(http.StatusOK),
-		Message: "get all responden success",
-		Data:    respondenArr,
+		Code:       uint32(http.StatusOK),
+		Message:    "get all responden success",
+		Pagination: pagination,
+		Data:       respondenArr,
 	}, nil
 }
 

@@ -24,24 +24,35 @@ func NewRespondenRepository(db *gorm.DB) *RespondenRepository {
 }
 
 type RespondenRepositoryUseCase interface {
-	FindAll(ctx context.Context) ([]*entity.Responden, error)
+	FindAll(ctx context.Context, limit, offset int) ([]*entity.Responden, int64, error)
 	FindByNim(ctx context.Context, nim string) (*entity.Responden, error)
 	Update(ctx context.Context, responden *entity.Responden, updatedFields map[string]interface{}) (*entity.Responden, error)
 	Create(ctx context.Context, req *entity.Responden) (*entity.Responden, error)
 	FindByNimList(ctx context.Context, nimList []string) ([]*entity.Responden, error)
 }
 
-func (r *RespondenRepository) FindAll(ctx context.Context) ([]*entity.Responden, error) {
+func (r *RespondenRepository) FindAll(ctx context.Context, limit, offset int) ([]*entity.Responden, int64, error) {
 	ctxSpan, span := trace.StartSpan(ctx, "RespondenRepository - FindAll")
 	defer span.End()
 
 	var responden []*entity.Responden
-	if err := r.db.Debug().WithContext(ctxSpan).Order("created_at desc").Limit(50).Find(&responden).Error; err != nil {
+	var totalRecords int64
+
+	if err := r.db.Debug().WithContext(ctxSpan).
+	Order("created_at desc").
+	Limit(limit).
+	Offset(offset).
+	Find(&responden).Error; err != nil {
 		log.Println("ERROR: [RespondenRepository - FindAll] Internal server error:", err)
-		return nil, status.Errorf(codes.Internal, "internal server error: %v", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}
 
-	return responden, nil
+	if err := r.db.Debug().WithContext(ctxSpan).Model(&entity.Responden{}).Count(&totalRecords).Error; err != nil {
+		log.Println("ERROR: [RespondenRepository - FindAll] Internal server error:", err)
+		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
+	}
+
+	return responden, totalRecords, nil
 }
 
 func (r *RespondenRepository) FindByNim(ctx context.Context, nim string) (*entity.Responden, error) {
