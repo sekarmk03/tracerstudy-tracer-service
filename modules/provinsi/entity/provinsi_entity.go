@@ -3,8 +3,6 @@ package entity
 import (
 	"time"
 	"tracerstudy-tracer-service/pb"
-
-	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -12,13 +10,13 @@ const (
 )
 
 type Provinsi struct {
-	Id        uint32         `json:"id"`
-	IdWil     string         `json:"id_wil"`
-	Nama      string         `json:"nama"`
-	Ump       uint64         `json:"ump"`
-	UmpPkts   uint64         `json:"ump_pkts"`
-	CreatedAt time.Time      `gorm:"type:timestamptz;not_null" json:"created_at"`
-	UpdatedAt time.Time      `gorm:"type:timestamptz;not_null" json:"updated_at"`
+	Id        uint32    `json:"id"`
+	IdWil     string    `json:"id_wil"`
+	Nama      string    `json:"nama"`
+	Ump       uint64    `json:"ump"`
+	UmpPkts   uint64    `json:"ump_pkts"`
+	CreatedAt time.Time `gorm:"type:timestamptz;not_null" json:"created_at"`
+	UpdatedAt time.Time `gorm:"type:timestamptz;not_null" json:"updated_at"`
 }
 
 func NewProvinsi(id uint32, idWil, nama string, ump, umpPkts uint64) *Provinsi {
@@ -44,7 +42,7 @@ func ConvertEntityToProto(p *Provinsi) *pb.Provinsi {
 		Nama:      p.Nama,
 		Ump:       p.Ump,
 		UmpPkts:   p.UmpPkts,
-		CreatedAt: timestamppb.New(p.CreatedAt),
-		UpdatedAt: timestamppb.New(p.UpdatedAt),
+		CreatedAt: p.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: p.UpdatedAt.Format(time.RFC3339),
 	}
 }

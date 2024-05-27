@@ -108,34 +108,3 @@ func ConvertEntityToProto(us *UserStudy) *pb.UserStudy {
 		UpdatedAt:                         timestamppb.New(us.UpdatedAt),
 	}
 }
-
-func ConvertProtoToEntity(us *pb.UserStudy) *UserStudy {
-	return &UserStudy{
-		Id:                                us.GetId(),
-		NamaResponden:                     us.GetNamaResponden(),
-		EmailResponden:                    us.GetEmailResponden(),
-		HpResponden:                       us.GetHpResponden(),
-		NamaInstansi:                      us.GetNamaInstansi(),
-		Jabatan:                           us.GetJabatan(),
-		AlamatInstansi:                    us.GetAlamatInstansi(),
-		NimLulusan:                        us.GetNimLulusan(),
-		NamaLulusan:                       us.GetNamaLulusan(),
-		ProdiLulusan:                      us.GetProdiLulusan(),
-		TahunLulusan:                      us.GetTahunLulusan(),
-		LamaMengenalLulusan:               us.GetLamaMengenalLulusan(),
-		Etika:                             us.GetEtika(),
-		KeahlianBidIlmu:                   us.GetKeahlianBidIlmu(),
-		BahasaInggris:                     us.GetBahasaInggris(),
-		PenggunaanTi:                      us.GetPenggunaanTi(),
-		Komunikasi:                        us.GetKomunikasi(),
-		KerjasamaTim:                      us.GetKerjasamaTim(),
-		PengembanganDiri:                  us.GetPengembanganDiri(),
-		KesiapanTerjunMasy:                us.GetKesiapanTerjunMasy(),
-		KeunggulanLulusan:                 us.GetKeunggulanLulusan(),
-		KelemahanLulusan:                  us.GetKelemahanLulusan(),
-		SaranPeningkatanKompetensiLulusan: us.GetSaranPeningkatanKompetensiLulusan(),
-		SaranPerbaikanKurikulum:           us.GetSaranPerbaikanKurikulum(),
-		CreatedAt:                         us.GetCreatedAt().AsTime(),
-		UpdatedAt:                         us.GetUpdatedAt().AsTime(),
-	}
-}
