@@ -247,3 +247,54 @@ func (rh *RespondenHandler) GetRespondenByNimList(ctx context.Context, req *pb.G
 		Data:    respondenArr,
 	}, nil
 }
+
+func (rh *RespondenHandler) GetOrCreateResponden(ctx context.Context, req *pb.GetRespondenByNimRequest) (*pb.GetRespondenByNimResponse, error) {
+	get, err := rh.GetRespondenByNim(ctx, req)
+	responden := get.GetData()
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [RespondenHandler - GetOrCreateResponden] Error while get responden by nim:", parseError.Message)
+		if parseError.Code == http.StatusNotFound {
+			create, err := rh.CreateResponden(ctx, &pb.CreateRespondenRequest{
+				Nim: req.GetNim(),
+			})
+			if err != nil {
+				parseError := errors.ParseError(err)
+				log.Println("ERROR: [RespondenHandler - GetOrCreateResponden] Error while create responden:", parseError.Message)
+				return &pb.GetRespondenByNimResponse{
+					Code:    uint32(http.StatusInternalServerError),
+					Message: parseError.Message,
+				}, status.Errorf(parseError.Code, parseError.Message)
+			}
+
+			responden = create.GetData()
+		} else {
+			return &pb.GetRespondenByNimResponse{
+				Code:    uint32(http.StatusInternalServerError),
+				Message: parseError.Message,
+			}, status.Errorf(parseError.Code, parseError.Message)
+		}
+	}
+
+	if responden.GetStatusUpdate() == 0 {
+		updateSiak, err := rh.UpdateRespondenFromSiak(ctx, &pb.UpdateRespondenFromSiakRequest{
+			Nim: req.GetNim(),
+		})
+		if err != nil {
+			parseError := errors.ParseError(err)
+			log.Println("ERROR: [RespondenHandler - GetOrCreateResponden] Error while update responden from siak:", parseError.Message)
+			return &pb.GetRespondenByNimResponse{
+				Code:    uint32(http.StatusInternalServerError),
+				Message: parseError.Message,
+			}, status.Errorf(parseError.Code, parseError.Message)
+		}
+
+		responden = updateSiak.GetData()
+	}
+
+	return &pb.GetRespondenByNimResponse{
+		Code:    uint32(http.StatusOK),
+		Message: "get or create responden success",
+		Data:    responden,
+	}, nil
+}
