@@ -95,7 +95,6 @@ func (svc *RespondenService) Update(ctx context.Context, nim string, fields *ent
 func (svc *RespondenService) Create(ctx context.Context, nim string) (*entity.Responden, error) {
 	reqEntity := &entity.Responden{
 		Nim:       nim,
-		TahunMasuk: "0000",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
