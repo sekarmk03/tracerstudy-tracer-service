@@ -80,7 +80,7 @@ func (p *PKTSRepository) Create(ctx context.Context, req *entity.PKTS) (*entity.
 	ctxSpan, span := trace.StartSpan(ctx, "PKTSRepository - Create")
 	defer span.End()
 
-	if err := p.db.Debug().WithContext(ctxSpan).Create(&req).Error; err != nil {
+	if err := p.db.Debug().WithContext(ctxSpan).Select("nim", "kode_prodi", "tahun_sidang").Create(&req).Error; err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
 			log.Println("ERROR: [PKTSRepository - Create] Duplicated key:", err)
 			return nil, status.Errorf(codes.AlreadyExists, "duplicated key %v", err)

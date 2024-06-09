@@ -68,8 +68,6 @@ func (svc *PKTSService) Create(ctx context.Context, nim, kodeProdi, tahunSidang 
 		Nim:         nim,
 		KodeProdi:   kodeProdi,
 		TahunSidang: tahunSidang,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
 	}
 
 	res, err := svc.pktsRepository.Create(ctx, reqEntity)

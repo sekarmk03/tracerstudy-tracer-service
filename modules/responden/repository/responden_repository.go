@@ -99,7 +99,7 @@ func (r *RespondenRepository) Create(ctx context.Context, req *entity.Responden)
 	ctxSpan, span := trace.StartSpan(ctx, "RespondenRepository - Create")
 	defer span.End()
 
-	if err := r.db.Debug().WithContext(ctxSpan).Create(&req).Error; err != nil {
+	if err := r.db.Debug().WithContext(ctxSpan).Select("nim").Create(&req).Error; err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
 			log.Println("ERROR: [RespondenRepository - Create] Duplicated key:", err)
 			return nil, status.Errorf(codes.AlreadyExists, "duplicated key %v", err)
