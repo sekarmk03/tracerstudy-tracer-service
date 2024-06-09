@@ -276,7 +276,7 @@ func (rh *RespondenHandler) GetOrCreateResponden(ctx context.Context, req *pb.Ge
 		}
 	}
 
-	if responden.GetStatusUpdate() == 0 {
+	if responden.GetTahunMasuk() == "0000" || responden.GetTahunMasuk() == "" {
 		updateSiak, err := rh.UpdateRespondenFromSiak(ctx, &pb.UpdateRespondenFromSiakRequest{
 			Nim: req.GetNim(),
 		})
