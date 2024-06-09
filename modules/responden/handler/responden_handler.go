@@ -254,7 +254,7 @@ func (rh *RespondenHandler) GetOrCreateResponden(ctx context.Context, req *pb.Ge
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenHandler - GetOrCreateResponden] Error while get responden by nim:", parseError.Message)
-		if parseError.Code == http.StatusNotFound {
+		if parseError.Code == codes.NotFound {
 			create, err := rh.CreateResponden(ctx, &pb.CreateRespondenRequest{
 				Nim: req.GetNim(),
 			})

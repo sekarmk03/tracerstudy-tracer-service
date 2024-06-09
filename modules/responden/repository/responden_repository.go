@@ -39,10 +39,10 @@ func (r *RespondenRepository) FindAll(ctx context.Context, limit, offset int) ([
 	var totalRecords int64
 
 	if err := r.db.Debug().WithContext(ctxSpan).
-	Order("created_at desc").
-	Limit(limit).
-	Offset(offset).
-	Find(&responden).Error; err != nil {
+		Order("created_at desc").
+		Limit(limit).
+		Offset(offset).
+		Find(&responden).Error; err != nil {
 		log.Println("ERROR: [RespondenRepository - FindAll] Internal server error:", err)
 		return nil, 0, status.Errorf(codes.Internal, "internal server error: %v", err)
 	}

@@ -9,6 +9,8 @@ import (
 	"tracerstudy-tracer-service/common/utils"
 	"tracerstudy-tracer-service/modules/responden/entity"
 	"tracerstudy-tracer-service/modules/responden/repository"
+
+	"google.golang.org/grpc/status"
 )
 
 type RespondenService struct {
@@ -49,7 +51,7 @@ func (svc *RespondenService) FindByNim(ctx context.Context, nim string) (*entity
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: [RespondenService - FindByNim] Error while find responden by nim:", parseError.Message)
-		return nil, err
+		return nil, status.Errorf(parseError.Code, parseError.Message)
 	}
 
 	return res, nil
@@ -71,6 +73,8 @@ func (svc *RespondenService) Update(ctx context.Context, nim string, fields *ent
 	utils.AddItemToMap(updateMap, "status_update", fields.StatusUpdate)
 	utils.AddItemToMap(updateMap, "jalur_masuk", fields.JalurMasuk)
 	utils.AddItemToMap(updateMap, "tahun_masuk", fields.TahunMasuk)
+	utils.AddItemToMap(updateMap, "tanggal_sidang", fields.TanggalSidang)
+	utils.AddItemToMap(updateMap, "tahun_sidang", fields.TahunSidang)
 	utils.AddItemToMap(updateMap, "lama_studi", fields.LamaStudi)
 	utils.AddItemToMap(updateMap, "kode_fakultas", fields.KodeFakultas)
 	utils.AddItemToMap(updateMap, "kode_prodi", fields.KodeProdi)
