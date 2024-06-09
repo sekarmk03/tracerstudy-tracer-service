@@ -8,7 +8,7 @@ import (
 	"tracerstudy-tracer-service/common/config"
 	"tracerstudy-tracer-service/common/errors"
 	"tracerstudy-tracer-service/common/utils"
-	mhsbSvc "tracerstudy-tracer-service/modules/mhsbiodataapi/service"
+	"tracerstudy-tracer-service/modules/responden/client"
 	"tracerstudy-tracer-service/modules/responden/entity"
 	resSvc "tracerstudy-tracer-service/modules/responden/service"
 	"tracerstudy-tracer-service/pb"
@@ -19,16 +19,16 @@ import (
 
 type RespondenHandler struct {
 	pb.UnimplementedRespondenServiceServer
-	config           config.Config
-	respondenSvc     resSvc.RespondenServiceUseCase
-	mhsbiodataapiSvc mhsbSvc.MhsBiodataApiServiceUseCase
+	config       config.Config
+	respondenSvc resSvc.RespondenServiceUseCase
+	mhsApiSvc    client.MhsBiodataApiServiceClient
 }
 
-func NewRespondenHandler(config config.Config, respondenService resSvc.RespondenServiceUseCase, mhsbiodataapiService mhsbSvc.MhsBiodataApiServiceUseCase) *RespondenHandler {
+func NewRespondenHandler(config config.Config, respondenService resSvc.RespondenServiceUseCase, mhsApiService client.MhsBiodataApiServiceClient) *RespondenHandler {
 	return &RespondenHandler{
-		config:           config,
-		respondenSvc:     respondenService,
-		mhsbiodataapiSvc: mhsbiodataapiService,
+		config:       config,
+		respondenSvc: respondenService,
+		mhsApiSvc:    mhsApiService,
 	}
 }
 
@@ -97,7 +97,17 @@ func (rh *RespondenHandler) GetRespondenByNim(ctx context.Context, req *pb.GetRe
 }
 
 func (rh *RespondenHandler) UpdateRespondenFromSiak(ctx context.Context, req *pb.UpdateRespondenFromSiakRequest) (*pb.UpdateRespondenResponse, error) {
-	mhsbiodata, err := rh.mhsbiodataapiSvc.FetchMhsBiodataByNimFromSiakApi(req.GetNim())
+	accessToken, err := utils.GetMetadataAuthorization(ctx)
+	if err != nil {
+		parseError := errors.ParseError(err)
+		log.Println("ERROR: [RespondenHandler - UpdateRespondenFromSiak] Error while get metadata authorization:", parseError.Message)
+		return &pb.UpdateRespondenResponse{
+			Code:    uint32(http.StatusUnauthorized),
+			Message: parseError.Message,
+		}, status.Errorf(parseError.Code, parseError.Message)
+	}
+
+	res, err := rh.mhsApiSvc.FetchMhsBiodataByNim(ctx, accessToken, req.GetNim())
 	if err != nil {
 		parseError := errors.ParseError(err)
 		log.Println("ERROR: RespondenHandler-UpdateRespondenFromSiak] Error while fetch mhsbiodata from siak:", parseError.Message)
@@ -107,6 +117,8 @@ func (rh *RespondenHandler) UpdateRespondenFromSiak(ctx context.Context, req *pb
 			Message: parseError.Message,
 		}, status.Errorf(parseError.Code, parseError.Message)
 	}
+
+	mhsbiodata := res.GetData()
 
 	var kodeProdi string
 	if len(mhsbiodata.KODEPST) > 4 {
