@@ -12,8 +12,7 @@ type Config struct {
 	ServiceName string `env:"SERVICE_NAME,default=tracerstudy-tracer-service"`
 	Port        Port
 	MySQL       MySQL
-	SIAK_API    SIAK_API
-	JWT       JWTConfig
+	JWT         JWTConfig
 }
 
 type Port struct {
@@ -27,11 +26,6 @@ type MySQL struct {
 	User     string `env:"MYSQL_USER,default=root"`
 	Password string `env:"MYSQL_PASSWORD,default=skrmk372"`
 	Name     string `env:"MYSQL_NAME,default=new_tracer"`
-}
-
-type SIAK_API struct {
-	URL string `env:"SIAK_API_URL"`
-	KEY string `env:"SIAK_API_KEY"`
 }
 
 type JWTConfig struct {
