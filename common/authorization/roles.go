@@ -14,14 +14,13 @@ type AccessibleRoles map[string]map[string][]uint32
 */
 
 const (
-	BasePath         = "tracer_study_grpc"
-	KabKotaSvc       = "KabKotaService"
-	MhsBiodataApiSvc = "MhsBiodataApiService"
-	PktsSvc          = "PKTSService"
-	ProvinsiSvc      = "ProvinsiService"
-	RespondenSvc     = "RespondenService"
-	UserStudySvc     = "UserStudyService"
-	ProdiSvc         = "ProdiService"
+	BasePath     = "tracer_study_grpc"
+	KabKotaSvc   = "KabKotaService"
+	PktsSvc      = "PKTSService"
+	ProvinsiSvc  = "ProvinsiService"
+	RespondenSvc = "RespondenService"
+	UserStudySvc = "UserStudyService"
+	ProdiSvc     = "ProdiService"
 )
 
 var roles = AccessibleRoles{
@@ -31,9 +30,6 @@ var roles = AccessibleRoles{
 		"CreateKabKota":     {1, 2},
 		"UpdateKabKota":     {1, 2},
 		"DeleteKabKota":     {1, 2},
-	},
-	"/" + BasePath + "." + MhsBiodataApiSvc + "/": {
-		"FetchMhsBiodataByNim": {1, 2, 3, 4, 5, 6},
 	},
 	"/" + BasePath + "." + PktsSvc + "/": {
 		"GetAllPKTS":          {1, 2, 3, 4, 5, 6, 7},
@@ -66,6 +62,7 @@ var roles = AccessibleRoles{
 		"CreateResponden":         {1, 2, 5, 6},
 		"UpdateResponden":         {1, 2, 5, 6},
 		"GetRespondenByNimList":   {1, 2, 3, 4, 5, 6, 7},
+		"GetOrCreateResponden":    {1, 2, 5, 6},
 	},
 	"/" + BasePath + "." + UserStudySvc + "/": {
 		"GetAllUserStudy":          {1, 2, 3, 4, 5, 6, 7},
