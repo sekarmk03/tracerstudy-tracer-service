@@ -96,4 +96,5 @@ service RespondenService {
     rpc CreateResponden(CreateRespondenRequest) returns (CreateRespondenResponse) {};
     rpc UpdateResponden(Responden) returns (UpdateRespondenResponse) {};
     rpc GetRespondenByNimList(GetRespondenByNimListRequest) returns (GetAllRespondenResponse) {};
+    rpc GetOrCreateResponden(GetRespondenByNimRequest) returns (GetRespondenByNimResponse) {};
 }

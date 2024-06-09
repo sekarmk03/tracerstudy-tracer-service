@@ -25,6 +25,7 @@ const (
 	RespondenService_CreateResponden_FullMethodName         = "/tracer_study_grpc.RespondenService/CreateResponden"
 	RespondenService_UpdateResponden_FullMethodName         = "/tracer_study_grpc.RespondenService/UpdateResponden"
 	RespondenService_GetRespondenByNimList_FullMethodName   = "/tracer_study_grpc.RespondenService/GetRespondenByNimList"
+	RespondenService_GetOrCreateResponden_FullMethodName    = "/tracer_study_grpc.RespondenService/GetOrCreateResponden"
 )
 
 // RespondenServiceClient is the client API for RespondenService service.
@@ -37,6 +38,7 @@ type RespondenServiceClient interface {
 	CreateResponden(ctx context.Context, in *CreateRespondenRequest, opts ...grpc.CallOption) (*CreateRespondenResponse, error)
 	UpdateResponden(ctx context.Context, in *Responden, opts ...grpc.CallOption) (*UpdateRespondenResponse, error)
 	GetRespondenByNimList(ctx context.Context, in *GetRespondenByNimListRequest, opts ...grpc.CallOption) (*GetAllRespondenResponse, error)
+	GetOrCreateResponden(ctx context.Context, in *GetRespondenByNimRequest, opts ...grpc.CallOption) (*GetRespondenByNimResponse, error)
 }
 
 type respondenServiceClient struct {
@@ -101,6 +103,15 @@ func (c *respondenServiceClient) GetRespondenByNimList(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *respondenServiceClient) GetOrCreateResponden(ctx context.Context, in *GetRespondenByNimRequest, opts ...grpc.CallOption) (*GetRespondenByNimResponse, error) {
+	out := new(GetRespondenByNimResponse)
+	err := c.cc.Invoke(ctx, RespondenService_GetOrCreateResponden_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RespondenServiceServer is the server API for RespondenService service.
 // All implementations must embed UnimplementedRespondenServiceServer
 // for forward compatibility
@@ -111,6 +122,7 @@ type RespondenServiceServer interface {
 	CreateResponden(context.Context, *CreateRespondenRequest) (*CreateRespondenResponse, error)
 	UpdateResponden(context.Context, *Responden) (*UpdateRespondenResponse, error)
 	GetRespondenByNimList(context.Context, *GetRespondenByNimListRequest) (*GetAllRespondenResponse, error)
+	GetOrCreateResponden(context.Context, *GetRespondenByNimRequest) (*GetRespondenByNimResponse, error)
 	mustEmbedUnimplementedRespondenServiceServer()
 }
 
@@ -135,6 +147,9 @@ func (UnimplementedRespondenServiceServer) UpdateResponden(context.Context, *Res
 }
 func (UnimplementedRespondenServiceServer) GetRespondenByNimList(context.Context, *GetRespondenByNimListRequest) (*GetAllRespondenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRespondenByNimList not implemented")
+}
+func (UnimplementedRespondenServiceServer) GetOrCreateResponden(context.Context, *GetRespondenByNimRequest) (*GetRespondenByNimResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOrCreateResponden not implemented")
 }
 func (UnimplementedRespondenServiceServer) mustEmbedUnimplementedRespondenServiceServer() {}
 
@@ -257,6 +272,24 @@ func _RespondenService_GetRespondenByNimList_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RespondenService_GetOrCreateResponden_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRespondenByNimRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RespondenServiceServer).GetOrCreateResponden(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RespondenService_GetOrCreateResponden_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RespondenServiceServer).GetOrCreateResponden(ctx, req.(*GetRespondenByNimRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RespondenService_ServiceDesc is the grpc.ServiceDesc for RespondenService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -287,6 +320,10 @@ var RespondenService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRespondenByNimList",
 			Handler:    _RespondenService_GetRespondenByNimList_Handler,
+		},
+		{
+			MethodName: "GetOrCreateResponden",
+			Handler:    _RespondenService_GetOrCreateResponden_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
